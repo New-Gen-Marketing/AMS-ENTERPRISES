@@ -536,6 +536,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s var(--ease), visibility 0.3s var(--ease);
+  -webkit-overflow-scrolling: touch;
 }
 .modal-overlay.is-open{ opacity:1; visibility: visible; }
 
@@ -544,6 +545,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   max-width: 880px;
   max-height: 88vh;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   background: var(--espresso);
   border: 1px solid var(--tobacco-line);
   border-radius: 10px;
@@ -555,11 +557,14 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 .modal-overlay.is-open .modal-panel{ transform: translateY(0) scale(1); }
 
 .modal-close{
-  position:absolute; top:14px; right:14px;
+  position: sticky;
+  float: right;
+  top:14px; right:14px;
+  margin: 14px 14px -36px auto;
   z-index: 5;
-  width: 36px; height: 36px;
+  width: 40px; height: 40px;
   border-radius: 50%;
-  background: rgba(28,20,16,0.7);
+  background: rgba(28,20,16,0.85);
   border: 1px solid var(--tobacco-line);
   color: var(--parchment);
   display:flex; align-items:center; justify-content:center;
@@ -697,9 +702,12 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   background:#000;
 }
 .video-close{
-  position:absolute; top:-46px; right:0;
-  width: 36px; height: 36px;
+  position:absolute; top:10px; right:10px;
+  z-index: 5;
+  width: 38px; height: 38px;
   border-radius: 50%;
+  background: rgba(12,8,6,0.7);
+  backdrop-filter: blur(3px);
   border: 1px solid var(--tobacco-line);
   color: var(--parchment);
   display:flex; align-items:center; justify-content:center;
@@ -803,14 +811,64 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   .product-grid{ grid-template-columns: 1fr; }
   .footer-inner{ flex-direction:column; gap: 2rem; }
 
-  .modal-thumbs{ grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
-  .modal-head, .modal-gallery, .modal-body-text, .modal-footer{ padding-left: 1.1rem; padding-right: 1.1rem; }
+  /* ---------- PRODUCT GALLERY MODAL: full-screen sheet on mobile ---------- */
+  .modal-overlay{ padding: 0; align-items: flex-end; }
+  .modal-panel{
+    width: 100%;
+    max-width: 100%;
+    max-height: 94vh;
+    border-radius: 16px 16px 0 0;
+    border-left: none; border-right: none; border-bottom: none;
+  }
+  .modal-overlay.is-open .modal-panel{ transform: translateY(0) scale(1); }
+
+  .modal-close{
+    width: 42px; height: 42px;
+    top: 12px; right: 12px;
+    margin: 12px 12px -38px auto;
+  }
+
+  .modal-head{ padding: 1.3rem 1.2rem 0; }
+  .modal-head h3{ font-size: 1.3rem; }
+  .modal-gallery{ padding: 1.1rem 1.2rem 0; }
+  .modal-body-text{ padding: 1.1rem 1.2rem 0; font-size: 0.9rem; }
+
+  .modal-gallery-arrow{
+    width: 44px; height: 44px;
+  }
+  .modal-gallery-arrow.prev{ left: 8px; }
+  .modal-gallery-arrow.next{ right: 8px; }
+
+  .modal-thumbs{ grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 0.7rem; }
+
+  .modal-footer{
+    padding: 1.2rem 1.2rem 1.6rem;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .modal-footer .btn-outline,
+  .modal-watch-btn{
+    width: 100%;
+    justify-content: center;
+    padding: 0.85rem 1.3rem;
+    font-size: 0.85rem;
+  }
+
+  /* ---------- VIDEO MODAL: edge-to-edge on mobile ---------- */
+  .video-overlay{ padding: 0; align-items: center; }
+  .video-panel{ max-width: 100%; padding: 0 0.6rem; }
+  .video-frame{ border-radius: 10px; }
+  .video-close{ width: 42px; height: 42px; top: 12px; right: 12px; }
+  .video-caption{ padding: 0 0.6rem; }
 }
 
 @media (max-width: 480px){
   .carousel-stage{ height: 380px; }
   .leather-card{ width: 230px; height: 300px; }
-  .video-close{ top:-42px; }
+
+  .modal-thumbs{ gap: 0.4rem; }
+  .modal-gallery-arrow{ width: 40px; height: 40px; }
+  .modal-head h3{ font-size: 1.18rem; }
 }
 
 </style>
@@ -1781,6 +1839,34 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   var activeName = '';
   var lastFocusedEl = null;
 
+  /* ---- mobile-safe scroll lock: prevents iOS background scroll/bounce
+         while a popup is open, and restores the exact scroll position
+         on close (plain overflow:hidden alone leaks on iOS Safari). ---- */
+  var savedScrollY = 0;
+  var lockCount = 0;
+  function lockBodyScroll(){
+    if (lockCount === 0){
+      savedScrollY = window.scrollY || window.pageYOffset || 0;
+      document.body.style.position = 'fixed';
+      document.body.style.top = (-savedScrollY) + 'px';
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+    }
+    lockCount++;
+  }
+  function unlockBodyScroll(){
+    lockCount = Math.max(0, lockCount - 1);
+    if (lockCount === 0){
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      window.scrollTo(0, savedScrollY);
+    }
+  }
+
   function setMainImage(i){
     var n = activeImages.length;
     activeImgIndex = ((i % n) + n) % n;
@@ -1818,13 +1904,13 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     setMainImage(0);
 
     productModal.classList.add('is-open');
-    document.body.style.overflow = 'hidden';
+    lockBodyScroll();
     modalClose.focus();
   }
 
   function closeProductModal(){
     productModal.classList.remove('is-open');
-    document.body.style.overflow = '';
+    unlockBodyScroll();
     if (lastFocusedEl) lastFocusedEl.focus();
   }
 
@@ -1902,7 +1988,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     videoPlayer.src = src || '';
     videoCaption.textContent = name || '';
     videoModal.classList.add('is-open');
-    document.body.style.overflow = 'hidden';
+    lockBodyScroll();
     videoClose.focus();
     // attempt autoplay once the modal is visible; browsers may block
     // unmuted autoplay, so this is a best-effort play() call.
@@ -1914,7 +2000,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     videoPlayer.pause();
     videoPlayer.removeAttribute('src');
     videoPlayer.load();
-    document.body.style.overflow = '';
+    unlockBodyScroll();
     if (videoLastFocusedEl) videoLastFocusedEl.focus();
   }
 

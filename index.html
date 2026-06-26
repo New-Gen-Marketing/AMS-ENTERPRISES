@@ -233,6 +233,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   display:flex; flex-direction:column; justify-content:flex-end;
   overflow:hidden;
   user-select:none;
+  transform-style: preserve-3d;
 }
 
 /* saddle-stitch border */
@@ -259,12 +260,48 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 .card-rivet.tl{ top:18px; left:18px; }
 .card-rivet.tr{ top:18px; right:18px; }
 
-.card-glyph{
+.card-render{
   position:absolute; top:50%; left:50%;
   transform: translate(-50%,-58%);
-  width: 46%;
+  width: 64%;
+  height: 56%;
+  display:flex; align-items:center; justify-content:center;
+  perspective: 900px;
+  transform-style: preserve-3d;
+}
+.card-render-img{
+  max-width: 100%;
+  max-height: 100%;
+  width: auto; height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 22px rgba(0,0,0,0.45));
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+/* fallback glyph sits in the same slot, hidden unless the image 404s */
+.card-glyph-fallback{
+  display: none;
+  width: 100%;
   color: rgba(232,220,200,0.5);
   filter: drop-shadow(0 8px 18px rgba(0,0,0,0.4));
+}
+
+/* the 3D rotate-in: plays on the card's render layer the moment it
+   becomes the active (centered) slide. translateZ keeps the turn
+   feeling like the object is spinning in place, not flattening out. */
+@keyframes cardSpinIn{
+  0%   { transform: translate(-50%,-58%) rotateY(0deg)    translateZ(0px)  scale(1); }
+  45%  { transform: translate(-50%,-58%) rotateY(-160deg) translateZ(60px) scale(0.92); }
+  55%  { transform: translate(-50%,-58%) rotateY(-200deg) translateZ(60px) scale(0.92); }
+  100% { transform: translate(-50%,-58%) rotateY(-360deg) translateZ(0px)  scale(1); }
+}
+.card-render.is-spinning{
+  animation: cardSpinIn 0.85s var(--ease);
+}
+@media (prefers-reduced-motion: reduce){
+  .card-render.is-spinning{ animation: none; }
 }
 
 .card-label{
@@ -1616,41 +1653,53 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
      so the 3D showcase has something to render before real photography
      is dropped into the image path. Replace card.image with a real
      <img> source when available (see README notes). */
+  /* ---------- DATA: hero carousel items ---------- */
+  /* Each card shows a 360°/3D render image (card.model3d) that spins into
+     view when the card becomes active. Drop a transparent-background PNG
+     or WebP render at each of these paths — see the images/3d/ folder
+     convention below. If a render is missing or fails to load, the card
+     automatically falls back to the inline SVG glyph so nothing breaks. */
   var CARD_DATA = [
     {
       cat: "Bags", name: "Heritage Satchel", price: "$ 428.00",
       c1: "#6b4326", c2: "#2c1c10",
       image: "images/bags/heritage-satchel-front.jpg",
+      model3d: "images/3d/bags/heritage-satchel-3d.png",
       glyph: '<svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="30" width="80" height="55" rx="8" stroke="currentColor" stroke-width="3"/><path d="M40 30 C40 14 80 14 80 30" stroke="currentColor" stroke-width="3"/><rect x="50" y="45" width="20" height="14" rx="3" stroke="currentColor" stroke-width="2.5"/></svg>'
     },
     {
       cat: "Jackets", name: "Classic Biker", price: "$ 645.00",
       c1: "#4a2f1c", c2: "#1f140d",
       image: "images/jackets/classic-biker.jpg",
+      model3d: "images/3d/jackets/classic-biker-3d.png",
       glyph: '<svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M40 18 L30 28 L25 80 L45 80 L48 45 L72 45 L75 80 L95 80 L90 28 L80 18 Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M48 18 L60 30 L72 18" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><line x1="60" y1="32" x2="60" y2="78" stroke="currentColor" stroke-width="2"/></svg>'
     },
     {
       cat: "Belts", name: "Classic Dress Belt", price: "$ 98.00",
       c1: "#5a3a22", c2: "#241a10",
       image: "images/belts/classic-dress.jpg",
+      model3d: "images/3d/belts/classic-dress-3d.png",
       glyph: '<svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 50 Q60 30 110 50" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><rect x="48" y="38" width="24" height="24" rx="4" stroke="currentColor" stroke-width="3"/><circle cx="60" cy="50" r="3" fill="currentColor"/></svg>'
     },
     {
       cat: "Wallets", name: "Classic Bifold", price: "$ 68.00",
       c1: "#704a28", c2: "#2a1d12",
       image: "images/wallets/bifold-classic.jpg",
+      model3d: "images/3d/wallets/bifold-classic-3d.png",
       glyph: '<svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="25" y="25" width="70" height="50" rx="6" stroke="currentColor" stroke-width="3"/><line x1="60" y1="25" x2="60" y2="75" stroke="currentColor" stroke-width="2"/><line x1="34" y1="40" x2="52" y2="40" stroke="currentColor" stroke-width="2"/><line x1="34" y1="50" x2="52" y2="50" stroke="currentColor" stroke-width="2"/></svg>'
     },
     {
       cat: "Bags", name: "Weekender Duffel", price: "$ 512.00",
       c1: "#5c3c22", c2: "#26190f",
       image: "images/bags/weekender-duffel.jpg",
+      model3d: "images/3d/bags/weekender-duffel-3d.png",
       glyph: '<svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="38" width="84" height="42" rx="14" stroke="currentColor" stroke-width="3"/><path d="M40 38 C40 22 80 22 80 38" stroke="currentColor" stroke-width="3"/><line x1="60" y1="38" x2="60" y2="80" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/></svg>'
     },
     {
       cat: "Jackets", name: "Aviator Bomber", price: "$ 720.00",
       c1: "#4f3219", c2: "#20140c",
       image: "images/jackets/aviator-bomber.jpg",
+      model3d: "images/3d/jackets/aviator-bomber-3d.png",
       glyph: '<svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M38 20 L26 32 L22 78 L46 78 L48 48 L72 48 L74 78 L98 78 L94 32 L82 20 Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><rect x="22" y="68" width="76" height="10" rx="4" stroke="currentColor" stroke-width="2"/></svg>'
     }
   ];
@@ -1675,13 +1724,24 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
       card.setAttribute('aria-label', (i+1) + ' of ' + CARD_DATA.length + ': ' + d.name);
       card.innerHTML =
         '<span class="card-rivet tl"></span><span class="card-rivet tr"></span>' +
-        '<span class="card-glyph">' + d.glyph + '</span>' +
+        '<span class="card-render" data-spin-target>' +
+          '<img class="card-render-img" src="' + d.model3d + '" alt="' + d.name + ' 3D render" draggable="false">' +
+          '<span class="card-glyph card-glyph-fallback">' + d.glyph + '</span>' +
+        '</span>' +
         '<div class="card-label">' +
           '<div class="card-cat">' + d.cat + '</div>' +
           '<div class="card-name">' + d.name + '</div>' +
           '<div class="card-price">' + d.price + '</div>' +
         '</div>';
       track.appendChild(card);
+
+      /* graceful fallback: if the 3D render is missing, hide the broken
+         image and reveal the SVG glyph underneath instead. */
+      var renderImg = card.querySelector('.card-render-img');
+      renderImg.addEventListener('error', function(){
+        renderImg.style.display = 'none';
+        card.querySelector('.card-glyph-fallback').style.display = 'block';
+      });
       cards.push(card);
 
       var dot = document.createElement('button');
@@ -1718,16 +1778,33 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     });
   }
 
+  function spinActiveCard(){
+    var activeCard = cards[current];
+    if (!activeCard) return;
+    var renderLayer = activeCard.querySelector('[data-spin-target]');
+    if (!renderLayer) return;
+    // restart the animation even if it's already mid-spin (rapid clicks):
+    // removing then re-adding the class on the next frame forces a replay.
+    renderLayer.classList.remove('is-spinning');
+    // eslint-disable-next-line no-unused-expressions
+    void renderLayer.offsetWidth; // force reflow so the class removal registers
+    renderLayer.classList.add('is-spinning');
+  }
+
   function goTo(i){
     var n = cards.length;
-    current = ((i % n) + n) % n;
+    var newCurrent = ((i % n) + n) % n;
+    var changed = newCurrent !== current;
+    current = newCurrent;
     layout();
+    if (changed) spinActiveCard();
   }
   function next(){ goTo(current + 1); }
   function prev(){ goTo(current - 1); }
 
   buildCards();
   layout();
+  spinActiveCard();
 
   prevBtn.addEventListener('click', prev);
   nextBtn.addEventListener('click', next);

@@ -448,15 +448,32 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   box-shadow: 0 0 0 2px var(--brass), 0 18px 40px -18px rgba(0,0,0,0.55);
 }
 
+/* ---------------------------------------------------------
+   IMAGE "STAGE" — used by both the grid thumbnail and the
+   modal's main image. Any image you drop into a data-* path,
+   regardless of its native aspect ratio (wide photo, tall
+   photo, square render, or a transparent isolated cutout
+   PNG), is shown in full via object-fit: contain, centered on
+   a consistent leather-toned backdrop with inset padding. This
+   guarantees nothing is ever cropped or stretched, and every
+   product — photographed or isolated on transparent — reads
+   the same way on the card.
+   --------------------------------------------------------- */
 .product-media{
   position: relative;
   aspect-ratio: 4 / 3;
-  background: linear-gradient(150deg, #3a2818, #211611);
+  background:
+    radial-gradient(120% 130% at 50% 0%, rgba(255,255,255,0.05), transparent 60%),
+    linear-gradient(150deg, #3a2818, #211611);
   overflow:hidden;
+  padding: 10%;
 }
 .product-media img{
-  width:100%; height:100%; object-fit:cover;
+  width:100%; height:100%;
+  object-fit: contain;
+  object-position: center;
   transition: transform 0.6s var(--ease);
+  filter: drop-shadow(0 14px 18px rgba(0,0,0,0.4));
 }
 .product-card:hover .product-media img{ transform: scale(1.05); }
 
@@ -638,10 +655,16 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   aspect-ratio: 4 / 3;
   border-radius: 8px;
   overflow: hidden;
-  background: linear-gradient(150deg, #3a2818, #211611);
+  background:
+    radial-gradient(120% 130% at 50% 0%, rgba(255,255,255,0.05), transparent 60%),
+    linear-gradient(150deg, #3a2818, #211611);
+  padding: 8%;
 }
 .modal-gallery-main img{
-  width:100%; height:100%; object-fit:cover;
+  width:100%; height:100%;
+  object-fit: contain;
+  object-position: center;
+  filter: drop-shadow(0 16px 20px rgba(0,0,0,0.4));
 }
 .modal-gallery-arrow{
   position:absolute; top:50%; transform: translateY(-50%);
@@ -668,11 +691,18 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   border-radius: 6px;
   overflow: hidden;
   border: 2px solid transparent;
-  background: linear-gradient(150deg, #3a2818, #211611);
+  background:
+    radial-gradient(120% 130% at 50% 0%, rgba(255,255,255,0.05), transparent 60%),
+    linear-gradient(150deg, #3a2818, #211611);
   transition: border-color 0.25s var(--ease), opacity 0.25s var(--ease);
   opacity: 0.7;
+  padding: 12%;
 }
-.modal-thumb img{ width:100%; height:100%; object-fit:cover; }
+.modal-thumb img{
+  width:100%; height:100%;
+  object-fit: contain;
+  object-position: center;
+}
 .modal-thumb.is-active{ border-color: var(--brass); opacity: 1; }
 .modal-thumb:hover{ opacity: 1; }
 
@@ -988,141 +1018,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     <h2>Leather Bags</h2>
     <p class="cat-desc">Structured totes and satchels in full-grain hide, built around a steel-framed interior so the shape holds for life.</p>
   </div>
-  <div class="product-grid">
-
-    <article class="product-card" tabindex="0"
-      data-id="heritage-satchel"
-      data-cat="Bags" data-name="The Heritage Satchel" data-price="$ 428.00"
-      data-desc="Cognac full-grain cowhide with brass turn-locks and a removable canvas liner. Hand-burnished edges, saddle-stitched in waxed linen thread."
-      data-video="videos/bags/heritage-satchel.mp4"
-      data-images='["images/bags/heritage-satchel-front.jpg","images/bags/heritage-satchel-back.jpg","images/bags/heritage-satchel-interior.jpg","images/bags/heritage-satchel-detail.jpg"]'>
-      <div class="product-media">
-        <img src="images/bags/heritage-satchel-front.jpg" alt="AMS Heritage Satchel in cognac full-grain leather, front view" loading="lazy">
-        <span class="rivet rivet-tl"></span><span class="rivet rivet-tr"></span>
-        <span class="media-expand" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
-      <div class="product-body">
-        <h3>The Heritage Satchel</h3>
-        <p>Cognac full-grain cowhide with brass turn-locks and a removable canvas liner. Hand-burnished edges, saddle-stitched in waxed linen thread.</p>
-        <ul class="spec-list">
-          <li>Full-grain cowhide, 2.2mm</li>
-          <li>Solid brass hardware</li>
-          <li>14" laptop sleeve</li>
-        </ul>
-        <div class="product-footer">
-          <span class="price">$ 428.00</span>
-          <div class="footer-actions">
-            <button class="btn-video" data-action="watch" aria-label="Watch video of The Heritage Satchel" title="Visualize it">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>
-            </button>
-            <button class="btn-outline" data-action="enquire">Enquire</button>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <article class="product-card" tabindex="0"
-      data-id="weekender-duffel"
-      data-cat="Bags" data-name="The Weekender Duffel" data-price="$ 512.00"
-      data-desc="Espresso-tanned hide over a reinforced canvas core. Detachable shoulder strap, interior shoe pocket, and a brass nameplate for monogramming."
-      data-video="videos/bags/weekender-duffel.mp4"
-      data-images='["images/bags/weekender-duffel.jpg","images/bags/weekender-duffel-side.jpg","images/bags/weekender-duffel-open.jpg","images/bags/weekender-duffel-strap.jpg"]'>
-      <div class="product-media">
-        <img src="images/bags/weekender-duffel.jpg" alt="AMS Weekender Duffel in espresso leather, three-quarter view" loading="lazy">
-        <span class="rivet rivet-tl"></span><span class="rivet rivet-tr"></span>
-        <span class="media-expand" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
-      <div class="product-body">
-        <h3>The Weekender Duffel</h3>
-        <p>Espresso-tanned hide over a reinforced canvas core. Detachable shoulder strap, interior shoe pocket, and a brass nameplate for monogramming.</p>
-        <ul class="spec-list">
-          <li>Vegetable-tanned hide</li>
-          <li>48L capacity</li>
-          <li>Monogram-ready</li>
-        </ul>
-        <div class="product-footer">
-          <span class="price">$ 512.00</span>
-          <div class="footer-actions">
-            <button class="btn-video" data-action="watch" aria-label="Watch video of The Weekender Duffel" title="Visualize it">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>
-            </button>
-            <button class="btn-outline" data-action="enquire">Enquire</button>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <article class="product-card" tabindex="0"
-      data-id="mini-crossbody"
-      data-cat="Bags" data-name="The Mini Crossbody" data-price="$ 215.00"
-      data-desc="Chestnut leather with an adjustable braided strap. A compact daily carry with three interior card slots and a magnetic snap closure."
-      data-video="videos/bags/mini-crossbody.mp4"
-      data-images='["images/bags/mini-crossbody.jpg","images/bags/mini-crossbody-back.jpg","images/bags/mini-crossbody-strap.jpg","images/bags/mini-crossbody-interior.jpg"]'>
-      <div class="product-media">
-        <img src="images/bags/mini-crossbody.jpg" alt="AMS Mini Crossbody bag in chestnut leather, hanging view" loading="lazy">
-        <span class="rivet rivet-tl"></span><span class="rivet rivet-tr"></span>
-        <span class="media-expand" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
-      <div class="product-body">
-        <h3>The Mini Crossbody</h3>
-        <p>Chestnut leather with an adjustable braided strap. A compact daily carry with three interior card slots and a magnetic snap closure.</p>
-        <ul class="spec-list">
-          <li>Top-grain leather</li>
-          <li>Adjustable 24"–52" strap</li>
-          <li>Magnetic closure</li>
-        </ul>
-        <div class="product-footer">
-          <span class="price">$ 215.00</span>
-          <div class="footer-actions">
-            <button class="btn-video" data-action="watch" aria-label="Watch video of The Mini Crossbody" title="Visualize it">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>
-            </button>
-            <button class="btn-outline" data-action="enquire">Enquire</button>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <article class="product-card" tabindex="0"
-      data-id="structured-tote"
-      data-cat="Bags" data-name="The Structured Tote" data-price="$ 389.00"
-      data-desc="Jet-black bridle leather over a rigid base board, so it stands upright when set down. Twin top handles wrapped in matching hide."
-      data-video="videos/bags/structured-tote.mp4"
-      data-images='["images/bags/structured-tote.jpg","images/bags/structured-tote-handles.jpg","images/bags/structured-tote-base.jpg","images/bags/structured-tote-interior.jpg"]'>
-      <div class="product-media">
-        <img src="images/bags/structured-tote.jpg" alt="AMS Structured Tote in black leather, standing on display" loading="lazy">
-        <span class="rivet rivet-tl"></span><span class="rivet rivet-tr"></span>
-        <span class="media-expand" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
-      <div class="product-body">
-        <h3>The Structured Tote</h3>
-        <p>Jet-black bridle leather over a rigid base board, so it stands upright when set down. Twin top handles wrapped in matching hide.</p>
-        <ul class="spec-list">
-          <li>Bridle leather</li>
-          <li>Rigid base construction</li>
-          <li>Fits A4 / letter folders</li>
-        </ul>
-        <div class="product-footer">
-          <span class="price">$ 389.00</span>
-          <div class="footer-actions">
-            <button class="btn-video" data-action="watch" aria-label="Watch video of The Structured Tote" title="Visualize it">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>
-            </button>
-            <button class="btn-outline" data-action="enquire">Enquire</button>
-          </div>
-        </div>
-      </div>
-    </article>
-
-  </div>
+  <div class="product-grid" id="bagsGrid"><!-- 8 cards injected by JS --></div>
 </section>
 
 <div class="stitched-divider" aria-hidden="true"></div>
@@ -1134,141 +1030,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     <h2>Leather Jackets</h2>
     <p class="cat-desc">Drum-dyed lambskin and steerhide outerwear, pattern-cut in-house and finished with hand-burnished seams.</p>
   </div>
-  <div class="product-grid">
-
-    <article class="product-card" tabindex="0"
-      data-id="classic-biker"
-      data-cat="Jackets" data-name="Women's Brown Leather Bomber Jacket" data-price="$ 80.00"
-      data-desc="Statement bomber design with ribbed hemline, stylish shoulder epaulettes, silver zippers and quilted sleeves."
-      data-video="Women's Brown Leather Bomber Jacket.mp4"
-      data-images='["womens-bomber-brown-leather-jacket-removebg-preview.png","womens-leather-bomber back.png","features.png","chart women.png"]'>
-      <div class="product-media">
-        <img src="womens-bomber-brown-leather-jacket-removebg-preview.png" alt="AMS Classic Biker Jacket in black lambskin, front view on mannequin" loading="lazy">
-        <span class="rivet rivet-tl"></span><span class="rivet rivet-tr"></span>
-        <span class="media-expand" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
-      <div class="product-body">
-        <h3>Women's Brown Leather Bomber Jacket</h3>
-        <p>High-quality leather, such as full-grain or top-grain leather, ensures durability, softness, and a luxurious feel.</p>
-        <ul class="spec-list">
-          <li>Real leather</li>
-          <li>100% sheepskin</li>
-          <li>Ribbed shirt-style collar, Brown</li>
-        </ul>
-        <div class="product-footer">
-          <span class="price">$ 80.00</span>
-          <div class="footer-actions">
-            <button class="btn-video" data-action="watch" aria-label="Watch video of The Classic Biker" title="Visualize it">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>
-            </button>
-            <button class="btn-outline" data-action="enquire">Enquire</button>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <article class="product-card" tabindex="0"
-      data-id="aviator-bomber"
-      data-cat="Jackets" data-name="The Aviator Bomber" data-price="$ 720.00"
-      data-desc="Tan steerhide shell lined in genuine shearling, with knit cuffs and hem for a close, warm fit. Patch chest pocket with snap flap."
-      data-video="videos/jackets/aviator-bomber.mp4"
-      data-images='["images/jackets/aviator-bomber.jpg","images/jackets/aviator-bomber-back.jpg","images/jackets/aviator-bomber-shearling.jpg","images/jackets/aviator-bomber-cuff.jpg"]'>
-      <div class="product-media">
-        <img src="images/jackets/aviator-bomber.jpg" alt="AMS Aviator Bomber in tan shearling-lined leather, side view" loading="lazy">
-        <span class="rivet rivet-tl"></span><span class="rivet rivet-tr"></span>
-        <span class="media-expand" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
-      <div class="product-body">
-        <h3>The Aviator Bomber</h3>
-        <p>Tan steerhide shell lined in genuine shearling, with knit cuffs and hem for a close, warm fit. Patch chest pocket with snap flap.</p>
-        <ul class="spec-list">
-          <li>Steerhide shell</li>
-          <li>Genuine shearling lining</li>
-          <li>Ribbed knit cuffs</li>
-        </ul>
-        <div class="product-footer">
-          <span class="price">$ 720.00</span>
-          <div class="footer-actions">
-            <button class="btn-video" data-action="watch" aria-label="Watch video of The Aviator Bomber" title="Visualize it">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>
-            </button>
-            <button class="btn-outline" data-action="enquire">Enquire</button>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <article class="product-card" tabindex="0"
-      data-id="field-overshirt"
-      data-cat="Jackets" data-name="The Field Overshirt" data-price="$ 398.00"
-      data-desc="Lightweight waxed goatskin cut like a shirt-jacket, with four flap pockets and a corozo-button placket. Layers under or over anything."
-      data-video="videos/jackets/field-overshirt.mp4"
-      data-images='["images/jackets/field-overshirt.jpg","images/jackets/field-overshirt-back.jpg","images/jackets/field-overshirt-pockets.jpg","images/jackets/field-overshirt-buttons.jpg"]'>
-      <div class="product-media">
-        <img src="images/jackets/field-overshirt.jpg" alt="AMS Field Overshirt in waxed brown leather, folded display" loading="lazy">
-        <span class="rivet rivet-tl"></span><span class="rivet rivet-tr"></span>
-        <span class="media-expand" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
-      <div class="product-body">
-        <h3>The Field Overshirt</h3>
-        <p>Lightweight waxed goatskin cut like a shirt-jacket, with four flap pockets and a corozo-button placket. Layers under or over anything.</p>
-        <ul class="spec-list">
-          <li>Waxed goatskin</li>
-          <li>Corozo nut buttons</li>
-          <li>Unlined, year-round weight</li>
-        </ul>
-        <div class="product-footer">
-          <span class="price">$ 398.00</span>
-          <div class="footer-actions">
-            <button class="btn-video" data-action="watch" aria-label="Watch video of The Field Overshirt" title="Visualize it">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>
-            </button>
-            <button class="btn-outline" data-action="enquire">Enquire</button>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <article class="product-card" tabindex="0"
-      data-id="long-trench"
-      data-cat="Jackets" data-name="The Long Trench" data-price="$ 810.00"
-      data-desc="Dark umber lambskin in a full-length silhouette with a belted waist and storm flap shoulders. Fully lined in brushed twill."
-      data-video="videos/jackets/long-trench.mp4"
-      data-images='["images/jackets/long-trench.jpg","images/jackets/long-trench-back.jpg","images/jackets/long-trench-belt.jpg","images/jackets/long-trench-lining.jpg"]'>
-      <div class="product-media">
-        <img src="images/jackets/long-trench.jpg" alt="AMS Long Trench Coat in dark brown leather, full length view" loading="lazy">
-        <span class="rivet rivet-tl"></span><span class="rivet rivet-tr"></span>
-        <span class="media-expand" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
-      <div class="product-body">
-        <h3>The Long Trench</h3>
-        <p>Dark umber lambskin in a full-length silhouette with a belted waist and storm flap shoulders. Fully lined in brushed twill.</p>
-        <ul class="spec-list">
-          <li>Lambskin, full length</li>
-          <li>Belted waist</li>
-          <li>Twill lining throughout</li>
-        </ul>
-        <div class="product-footer">
-          <span class="price">$ 810.00</span>
-          <div class="footer-actions">
-            <button class="btn-video" data-action="watch" aria-label="Watch video of The Long Trench" title="Visualize it">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>
-            </button>
-            <button class="btn-outline" data-action="enquire">Enquire</button>
-          </div>
-        </div>
-      </div>
-    </article>
-
-  </div>
+  <div class="product-grid" id="jacketsGrid"><!-- 8 cards injected by JS --></div>
 </section>
 
 <div class="stitched-divider" aria-hidden="true"></div>
@@ -1280,141 +1042,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     <h2>Leather Belts</h2>
     <p class="cat-desc">Single-piece hide belts, edge-painted and burnished by hand, fitted with solid cast hardware.</p>
   </div>
-  <div class="product-grid">
-
-    <article class="product-card" tabindex="0"
-      data-id="classic-dress"
-      data-cat="Belts" data-name="The Classic Dress Belt" data-price="$ 98.00"
-      data-desc="1.1-inch black calfskin with a polished nickel-free buckle. Five-hole punch, hand-beveled edge, available made-to-size."
-      data-video="videos/belts/classic-dress.mp4"
-      data-images='["images/belts/classic-dress.jpg","images/belts/classic-dress-buckle.jpg","images/belts/classic-dress-edge.jpg","images/belts/classic-dress-folded.jpg"]'>
-      <div class="product-media">
-        <img src="images/belts/classic-dress.jpg" alt="AMS Classic Dress Belt in black leather with silver buckle" loading="lazy">
-        <span class="rivet rivet-tl"></span><span class="rivet rivet-tr"></span>
-        <span class="media-expand" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
-      <div class="product-body">
-        <h3>The Classic Dress Belt</h3>
-        <p>1.1-inch black calfskin with a polished nickel-free buckle. Five-hole punch, hand-beveled edge, available made-to-size.</p>
-        <ul class="spec-list">
-          <li>Calfskin, 3.5mm</li>
-          <li>Solid brass buckle core</li>
-          <li>Made-to-size</li>
-        </ul>
-        <div class="product-footer">
-          <span class="price">$ 98.00</span>
-          <div class="footer-actions">
-            <button class="btn-video" data-action="watch" aria-label="Watch video of The Classic Dress Belt" title="Visualize it">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>
-            </button>
-            <button class="btn-outline" data-action="enquire">Enquire</button>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <article class="product-card" tabindex="0"
-      data-id="work-utility"
-      data-cat="Belts" data-name="The Work Utility Belt" data-price="$ 112.00"
-      data-desc="1.5-inch saddle leather built for daily wear, with a brass roller buckle that won't scuff the strap over years of use."
-      data-video="videos/belts/work-utility.mp4"
-      data-images='["images/belts/work-utility.jpg","images/belts/work-utility-buckle.jpg","images/belts/work-utility-keeper.jpg","images/belts/work-utility-folded.jpg"]'>
-      <div class="product-media">
-        <img src="images/belts/work-utility.jpg" alt="AMS Work Utility Belt in brown leather with brass roller buckle" loading="lazy">
-        <span class="rivet rivet-tl"></span><span class="rivet rivet-tr"></span>
-        <span class="media-expand" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
-      <div class="product-body">
-        <h3>The Work Utility Belt</h3>
-        <p>1.5-inch saddle leather built for daily wear, with a brass roller buckle that won't scuff the strap over years of use.</p>
-        <ul class="spec-list">
-          <li>Saddle leather, 4mm</li>
-          <li>Brass roller buckle</li>
-          <li>Reinforced stitched keeper</li>
-        </ul>
-        <div class="product-footer">
-          <span class="price">$ 112.00</span>
-          <div class="footer-actions">
-            <button class="btn-video" data-action="watch" aria-label="Watch video of The Work Utility Belt" title="Visualize it">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>
-            </button>
-            <button class="btn-outline" data-action="enquire">Enquire</button>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <article class="product-card" tabindex="0"
-      data-id="woven-casual"
-      data-cat="Belts" data-name="The Woven Casual" data-price="$ 86.00"
-      data-desc="Tan leather strands hand-braided into a flexible weave, finished with an antiqued brass D-ring closure for a relaxed fit."
-      data-video="videos/belts/woven-casual.mp4"
-      data-images='["images/belts/woven-casual.jpg","images/belts/woven-casual-weave-detail.jpg","images/belts/woven-casual-dring.jpg","images/belts/woven-casual-folded.jpg"]'>
-      <div class="product-media">
-        <img src="images/belts/woven-casual.jpg" alt="AMS Woven Casual Belt in tan hand-braided leather" loading="lazy">
-        <span class="rivet rivet-tl"></span><span class="rivet rivet-tr"></span>
-        <span class="media-expand" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
-      <div class="product-body">
-        <h3>The Woven Casual</h3>
-        <p>Tan leather strands hand-braided into a flexible weave, finished with an antiqued brass D-ring closure for a relaxed fit.</p>
-        <ul class="spec-list">
-          <li>Hand-braided leather</li>
-          <li>Antiqued brass D-ring</li>
-          <li>One-size adjustable</li>
-        </ul>
-        <div class="product-footer">
-          <span class="price">$ 86.00</span>
-          <div class="footer-actions">
-            <button class="btn-video" data-action="watch" aria-label="Watch video of The Woven Casual" title="Visualize it">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>
-            </button>
-            <button class="btn-outline" data-action="enquire">Enquire</button>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <article class="product-card" tabindex="0"
-      data-id="reversible-formal"
-      data-cat="Belts" data-name="The Reversible Formal" data-price="$ 134.00"
-      data-desc="Black on one face, chestnut on the other, joined seamlessly with a rotating buckle plate. Two belts in a single strap of hide."
-      data-video="videos/belts/reversible-formal.mp4"
-      data-images='["images/belts/reversible-formal.jpg","images/belts/reversible-formal-black-side.jpg","images/belts/reversible-formal-buckle.jpg","images/belts/reversible-formal-giftbox.jpg"]'>
-      <div class="product-media">
-        <img src="images/belts/reversible-formal.jpg" alt="AMS Reversible Formal Belt, black and brown leather sides shown" loading="lazy">
-        <span class="rivet rivet-tl"></span><span class="rivet rivet-tr"></span>
-        <span class="media-expand" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
-      <div class="product-body">
-        <h3>The Reversible Formal</h3>
-        <p>Black on one face, chestnut on the other, joined seamlessly with a rotating buckle plate. Two belts in a single strap of hide.</p>
-        <ul class="spec-list">
-          <li>Dual-face construction</li>
-          <li>Rotating buckle plate</li>
-          <li>Gift box included</li>
-        </ul>
-        <div class="product-footer">
-          <span class="price">$ 134.00</span>
-          <div class="footer-actions">
-            <button class="btn-video" data-action="watch" aria-label="Watch video of The Reversible Formal" title="Visualize it">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>
-            </button>
-            <button class="btn-outline" data-action="enquire">Enquire</button>
-          </div>
-        </div>
-      </div>
-    </article>
-
-  </div>
+  <div class="product-grid" id="beltsGrid"><!-- 8 cards injected by JS --></div>
 </section>
 
 <div class="stitched-divider" aria-hidden="true"></div>
@@ -1426,141 +1054,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     <h2>Leather Wallets</h2>
     <p class="cat-desc">Slim, pocket-first wallets cut from offcuts of our bag leather — nothing from the hide goes to waste.</p>
   </div>
-  <div class="product-grid">
-
-    <article class="product-card" tabindex="0"
-      data-id="bifold-classic"
-      data-cat="Wallets" data-name="The Classic Bifold" data-price="$ 68.00"
-      data-desc="Cognac full-grain hide with six card slots and a hidden currency pocket. Breaks in to a thin, pocket-shaped curve within weeks."
-      data-video="videos/wallets/bifold-classic.mp4"
-      data-images='["images/wallets/bifold-classic.jpg","images/wallets/bifold-classic-closed.jpg","images/wallets/bifold-classic-cards.jpg","images/wallets/bifold-classic-pocket.jpg"]'>
-      <div class="product-media">
-        <img src="images/wallets/bifold-classic.jpg" alt="AMS Classic Bifold Wallet in cognac leather, open view" loading="lazy">
-        <span class="rivet rivet-tl"></span><span class="rivet rivet-tr"></span>
-        <span class="media-expand" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
-      <div class="product-body">
-        <h3>The Classic Bifold</h3>
-        <p>Cognac full-grain hide with six card slots and a hidden currency pocket. Breaks in to a thin, pocket-shaped curve within weeks.</p>
-        <ul class="spec-list">
-          <li>Full-grain leather</li>
-          <li>6 card slots + bill pocket</li>
-          <li>RFID-shielding layer</li>
-        </ul>
-        <div class="product-footer">
-          <span class="price">$ 68.00</span>
-          <div class="footer-actions">
-            <button class="btn-video" data-action="watch" aria-label="Watch video of The Classic Bifold" title="Visualize it">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>
-            </button>
-            <button class="btn-outline" data-action="enquire">Enquire</button>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <article class="product-card" tabindex="0"
-      data-id="cardholder-slim"
-      data-cat="Wallets" data-name="The Slim Cardholder" data-price="$ 48.00"
-      data-desc="A single fold of black calfskin holding four cards and folded notes, under 4mm thick. Disappears into a front pocket."
-      data-video="videos/wallets/cardholder-slim.mp4"
-      data-images='["images/wallets/cardholder-slim.jpg","images/wallets/cardholder-slim-side.jpg","images/wallets/cardholder-slim-cards.jpg","images/wallets/cardholder-slim-pocket.jpg"]'>
-      <div class="product-media">
-        <img src="images/wallets/cardholder-slim.jpg" alt="AMS Slim Cardholder in black leather, holding cards" loading="lazy">
-        <span class="rivet rivet-tl"></span><span class="rivet rivet-tr"></span>
-        <span class="media-expand" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
-      <div class="product-body">
-        <h3>The Slim Cardholder</h3>
-        <p>A single fold of black calfskin holding four cards and folded notes, under 4mm thick. Disappears into a front pocket.</p>
-        <ul class="spec-list">
-          <li>Calfskin, single-fold</li>
-          <li>4 card capacity</li>
-          <li>Under 4mm thickness</li>
-        </ul>
-        <div class="product-footer">
-          <span class="price">$ 48.00</span>
-          <div class="footer-actions">
-            <button class="btn-video" data-action="watch" aria-label="Watch video of The Slim Cardholder" title="Visualize it">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>
-            </button>
-            <button class="btn-outline" data-action="enquire">Enquire</button>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <article class="product-card" tabindex="0"
-      data-id="zip-travel"
-      data-cat="Wallets" data-name="The Zip Travel Wallet" data-price="$ 96.00"
-      data-desc="Brown bridle leather organiser with a passport sleeve, boarding-pass slot, and full perimeter zip in matte brass."
-      data-video="videos/wallets/zip-travel.mp4"
-      data-images='["images/wallets/zip-travel.jpg","images/wallets/zip-travel-open.jpg","images/wallets/zip-travel-passport.jpg","images/wallets/zip-travel-zip-detail.jpg"]'>
-      <div class="product-media">
-        <img src="images/wallets/zip-travel.jpg" alt="AMS Zip Travel Wallet in brown leather with passport sleeve" loading="lazy">
-        <span class="rivet rivet-tl"></span><span class="rivet rivet-tr"></span>
-        <span class="media-expand" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
-      <div class="product-body">
-        <h3>The Zip Travel Wallet</h3>
-        <p>Brown bridle leather organiser with a passport sleeve, boarding-pass slot, and full perimeter zip in matte brass.</p>
-        <ul class="spec-list">
-          <li>Bridle leather</li>
-          <li>Passport &amp; ticket slots</li>
-          <li>Full-perimeter zip</li>
-        </ul>
-        <div class="product-footer">
-          <span class="price">$ 96.00</span>
-          <div class="footer-actions">
-            <button class="btn-video" data-action="watch" aria-label="Watch video of The Zip Travel Wallet" title="Visualize it">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>
-            </button>
-            <button class="btn-outline" data-action="enquire">Enquire</button>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <article class="product-card" tabindex="0"
-      data-id="long-trifold"
-      data-cat="Wallets" data-name="The Long Trifold" data-price="$ 79.00"
-      data-desc="Chestnut leather trifold with a checkbook pocket and eight card slots — built for those who carry more than a card and a note."
-      data-video="videos/wallets/long-trifold.mp4"
-      data-images='["images/wallets/long-trifold.jpg","images/wallets/long-trifold-closed.jpg","images/wallets/long-trifold-checkbook.jpg","images/wallets/long-trifold-cards.jpg"]'>
-      <div class="product-media">
-        <img src="images/wallets/long-trifold.jpg" alt="AMS Long Trifold Wallet in chestnut leather, unfolded view" loading="lazy">
-        <span class="rivet rivet-tl"></span><span class="rivet rivet-tr"></span>
-        <span class="media-expand" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
-      <div class="product-body">
-        <h3>The Long Trifold</h3>
-        <p>Chestnut leather trifold with a checkbook pocket and eight card slots — built for those who carry more than a card and a note.</p>
-        <ul class="spec-list">
-          <li>Chestnut top-grain hide</li>
-          <li>8 card slots</li>
-          <li>Checkbook pocket</li>
-        </ul>
-        <div class="product-footer">
-          <span class="price">$ 79.00</span>
-          <div class="footer-actions">
-            <button class="btn-video" data-action="watch" aria-label="Watch video of The Long Trifold" title="Visualize it">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>
-            </button>
-            <button class="btn-outline" data-action="enquire">Enquire</button>
-          </div>
-        </div>
-      </div>
-    </article>
-
-  </div>
+  <div class="product-grid" id="walletsGrid"><!-- 8 cards injected by JS --></div>
 </section>
 
 <!-- ===================== FOOTER ===================== -->
@@ -1648,17 +1142,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 (function(){
   "use strict";
 
-  /* ---------- DATA: hero carousel items ---------- */
-  /* Each card uses an inline SVG "glyph" as a placeholder silhouette
-     so the 3D showcase has something to render before real photography
-     is dropped into the image path. Replace card.image with a real
-     <img> source when available (see README notes). */
-  /* ---------- DATA: hero carousel items ---------- */
-  /* Each card shows a 360°/3D render image (card.model3d) that spins into
-     view when the card becomes active. Drop a transparent-background PNG
-     or WebP render at each of these paths — see the images/3d/ folder
-     convention below. If a render is missing or fails to load, the card
-     automatically falls back to the inline SVG glyph so nothing breaks. */
+  /* ---------- DATA: hero carousel items (featured picks) ---------- */
   var CARD_DATA = [
     {
       cat: "Bags", name: "Heritage Satchel", price: "$ 428.00",
@@ -1703,6 +1187,303 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
       glyph: '<svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M38 20 L26 32 L22 78 L46 78 L48 48 L72 48 L74 78 L98 78 L94 32 L82 20 Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><rect x="22" y="68" width="76" height="10" rx="4" stroke="currentColor" stroke-width="2"/></svg>'
     }
   ];
+
+  /* =========================================================
+     DATA: product grids (8 cards per category)
+     Drop any image into these paths — wide photos, tall
+     photos, square renders, or transparent isolated cutout
+     PNGs all display correctly. The card and modal "stage"
+     uses object-fit: contain on a fixed-ratio backdrop, so
+     nothing is ever cropped or distorted regardless of the
+     source image's native dimensions.
+     ========================================================= */
+  var PRODUCT_DATA = {
+    bags: [
+      {
+        id: "heritage-satchel", name: "The Heritage Satchel", price: "$ 428.00",
+        desc: "Cognac full-grain cowhide with brass turn-locks and a removable canvas liner. Hand-burnished edges, saddle-stitched in waxed linen thread.",
+        specs: ["Full-grain cowhide, 2.2mm", "Solid brass hardware", "14\" laptop sleeve"],
+        video: "videos/bags/heritage-satchel.mp4",
+        images: ["images/bags/heritage-satchel-front.jpg","images/bags/heritage-satchel-back.jpg","images/bags/heritage-satchel-interior.jpg","images/bags/heritage-satchel-detail.jpg"]
+      },
+      {
+        id: "weekender-duffel", name: "The Weekender Duffel", price: "$ 512.00",
+        desc: "Espresso-tanned hide over a reinforced canvas core. Detachable shoulder strap, interior shoe pocket, and a brass nameplate for monogramming.",
+        specs: ["Vegetable-tanned hide", "48L capacity", "Monogram-ready"],
+        video: "videos/bags/weekender-duffel.mp4",
+        images: ["images/bags/weekender-duffel.jpg","images/bags/weekender-duffel-side.jpg","images/bags/weekender-duffel-open.jpg","images/bags/weekender-duffel-strap.jpg"]
+      },
+      {
+        id: "mini-crossbody", name: "The Mini Crossbody", price: "$ 215.00",
+        desc: "Chestnut leather with an adjustable braided strap. A compact daily carry with three interior card slots and a magnetic snap closure.",
+        specs: ["Top-grain leather", "Adjustable 24\"–52\" strap", "Magnetic closure"],
+        video: "videos/bags/mini-crossbody.mp4",
+        images: ["images/bags/mini-crossbody.jpg","images/bags/mini-crossbody-back.jpg","images/bags/mini-crossbody-strap.jpg","images/bags/mini-crossbody-interior.jpg"]
+      },
+      {
+        id: "structured-tote", name: "The Structured Tote", price: "$ 389.00",
+        desc: "Jet-black bridle leather over a rigid base board, so it stands upright when set down. Twin top handles wrapped in matching hide.",
+        specs: ["Bridle leather", "Rigid base construction", "Fits A4 / letter folders"],
+        video: "videos/bags/structured-tote.mp4",
+        images: ["images/bags/structured-tote.jpg","images/bags/structured-tote-handles.jpg","images/bags/structured-tote-base.jpg","images/bags/structured-tote-interior.jpg"]
+      },
+      {
+        id: "messenger-flap", name: "The Messenger Flap", price: "$ 356.00",
+        desc: "Saddle-tan leather messenger with a full-width front flap, twin roller buckles, and a cross-body strap rated for daily commuting.",
+        specs: ["Saddle leather, 2mm", "Roller buckle closures", "Padded 15\" laptop bay"],
+        video: "videos/bags/messenger-flap.mp4",
+        images: ["images/bags/messenger-flap.jpg","images/bags/messenger-flap-back.jpg","images/bags/messenger-flap-open.jpg","images/bags/messenger-flap-strap.jpg"]
+      },
+      {
+        id: "bucket-drawstring", name: "The Bucket Drawstring", price: "$ 268.00",
+        desc: "Soft pebbled hide gathered at the top with a braided leather drawstring. A wide, unstructured silhouette that softens with wear.",
+        specs: ["Pebbled top-grain leather", "Braided drawstring closure", "Detachable inner pouch"],
+        video: "videos/bags/bucket-drawstring.mp4",
+        images: ["images/bags/bucket-drawstring.jpg","images/bags/bucket-drawstring-open.jpg","images/bags/bucket-drawstring-pouch.jpg","images/bags/bucket-drawstring-strap.jpg"]
+      },
+      {
+        id: "camera-satchel", name: "The Camera Satchel", price: "$ 312.00",
+        desc: "Compact cross-body shell with a padded, removable insert and quick-release buckles, built around the proportions of a mirrorless kit.",
+        specs: ["Top-grain leather shell", "Removable padded insert", "Quick-release buckles"],
+        video: "videos/bags/camera-satchel.mp4",
+        images: ["images/bags/camera-satchel.jpg","images/bags/camera-satchel-open.jpg","images/bags/camera-satchel-insert.jpg","images/bags/camera-satchel-strap.jpg"]
+      },
+      {
+        id: "executive-briefcase", name: "The Executive Briefcase", price: "$ 598.00",
+        desc: "Structured hard-sided briefcase in oxblood leather, with a combination-lock latch and a fitted document divider inside.",
+        specs: ["Oxblood full-grain hide", "Combination-lock latch", "Fitted document divider"],
+        video: "videos/bags/executive-briefcase.mp4",
+        images: ["images/bags/executive-briefcase.jpg","images/bags/executive-briefcase-side.jpg","images/bags/executive-briefcase-interior.jpg","images/bags/executive-briefcase-latch.jpg"]
+      }
+    ],
+    jackets: [
+      {
+        id: "womens-bomber-brown", name: "Women's Brown Leather Bomber Jacket", price: "$ 80.00",
+        desc: "Statement bomber design with ribbed hemline, stylish shoulder epaulettes, silver zippers and quilted sleeves in soft sheepskin.",
+        specs: ["Real leather", "100% sheepskin", "Ribbed shirt-style collar, brown"],
+        video: "Women's Brown Leather Bomber Jacket.mp4",
+        images: ["womens-bomber-brown-leather-jacket-removebg-preview.png","womens-leather-bomber back.png","features.png","chart women.png"]
+      },
+      {
+        id: "aviator-bomber", name: "The Aviator Bomber", price: "$ 720.00",
+        desc: "Tan steerhide shell lined in genuine shearling, with knit cuffs and hem for a close, warm fit. Patch chest pocket with snap flap.",
+        specs: ["Steerhide shell", "Genuine shearling lining", "Ribbed knit cuffs"],
+        video: "videos/jackets/aviator-bomber.mp4",
+        images: ["images/jackets/aviator-bomber.jpg","images/jackets/aviator-bomber-back.jpg","images/jackets/aviator-bomber-shearling.jpg","images/jackets/aviator-bomber-cuff.jpg"]
+      },
+      {
+        id: "field-overshirt", name: "The Field Overshirt", price: "$ 398.00",
+        desc: "Lightweight waxed goatskin cut like a shirt-jacket, with four flap pockets and a corozo-button placket. Layers under or over anything.",
+        specs: ["Waxed goatskin", "Corozo nut buttons", "Unlined, year-round weight"],
+        video: "videos/jackets/field-overshirt.mp4",
+        images: ["images/jackets/field-overshirt.jpg","images/jackets/field-overshirt-back.jpg","images/jackets/field-overshirt-pockets.jpg","images/jackets/field-overshirt-buttons.jpg"]
+      },
+      {
+        id: "long-trench", name: "The Long Trench", price: "$ 810.00",
+        desc: "Dark umber lambskin in a full-length silhouette with a belted waist and storm flap shoulders. Fully lined in brushed twill.",
+        specs: ["Lambskin, full length", "Belted waist", "Twill lining throughout"],
+        video: "videos/jackets/long-trench.mp4",
+        images: ["images/jackets/long-trench.jpg","images/jackets/long-trench-back.jpg","images/jackets/long-trench-belt.jpg","images/jackets/long-trench-lining.jpg"]
+      },
+      {
+        id: "classic-biker", name: "The Classic Biker", price: "$ 645.00",
+        desc: "Black lambskin moto jacket with asymmetric zip, quilted shoulder panels, and a removable belt at the waist. The shape that started it all.",
+        specs: ["Black lambskin", "Asymmetric front zip", "Quilted shoulder panels"],
+        video: "videos/jackets/classic-biker.mp4",
+        images: ["images/jackets/classic-biker.jpg","images/jackets/classic-biker-back.jpg","images/jackets/classic-biker-collar.jpg","images/jackets/classic-biker-zip.jpg"]
+      },
+      {
+        id: "suede-trucker", name: "The Suede Trucker", price: "$ 465.00",
+        desc: "Sand-toned suede in a cropped trucker cut, with corduroy-trimmed collar and chest button flaps. A softer texture for warmer days.",
+        specs: ["Sand suede", "Corduroy collar trim", "Twin chest button flaps"],
+        video: "videos/jackets/suede-trucker.mp4",
+        images: ["images/jackets/suede-trucker.jpg","images/jackets/suede-trucker-back.jpg","images/jackets/suede-trucker-collar.jpg","images/jackets/suede-trucker-pocket.jpg"]
+      },
+      {
+        id: "quilted-vest", name: "The Quilted Vest", price: "$ 312.00",
+        desc: "Sleeveless diamond-quilted leather vest over a brushed-cotton lining, built as a mid-layer for cooler shoulder seasons.",
+        specs: ["Diamond-quilted leather", "Brushed-cotton lining", "Snap-front closure"],
+        video: "videos/jackets/quilted-vest.mp4",
+        images: ["images/jackets/quilted-vest.jpg","images/jackets/quilted-vest-back.jpg","images/jackets/quilted-vest-lining.jpg","images/jackets/quilted-vest-snap.jpg"]
+      },
+      {
+        id: "racer-jacket", name: "The Racer Jacket", price: "$ 588.00",
+        desc: "Slim-cut steerhide racer with a snap-down collar and ribbed side panels, finished with contrast topstitching along every seam.",
+        specs: ["Steerhide, slim cut", "Snap-down collar", "Contrast topstitched seams"],
+        video: "videos/jackets/racer-jacket.mp4",
+        images: ["images/jackets/racer-jacket.jpg","images/jackets/racer-jacket-back.jpg","images/jackets/racer-jacket-collar.jpg","images/jackets/racer-jacket-stitch.jpg"]
+      }
+    ],
+    belts: [
+      {
+        id: "classic-dress", name: "The Classic Dress Belt", price: "$ 98.00",
+        desc: "1.1-inch black calfskin with a polished nickel-free buckle. Five-hole punch, hand-beveled edge, available made-to-size.",
+        specs: ["Calfskin, 3.5mm", "Solid brass buckle core", "Made-to-size"],
+        video: "videos/belts/classic-dress.mp4",
+        images: ["images/belts/classic-dress.jpg","images/belts/classic-dress-buckle.jpg","images/belts/classic-dress-edge.jpg","images/belts/classic-dress-folded.jpg"]
+      },
+      {
+        id: "work-utility", name: "The Work Utility Belt", price: "$ 112.00",
+        desc: "1.5-inch saddle leather built for daily wear, with a brass roller buckle that won't scuff the strap over years of use.",
+        specs: ["Saddle leather, 4mm", "Brass roller buckle", "Reinforced stitched keeper"],
+        video: "videos/belts/work-utility.mp4",
+        images: ["images/belts/work-utility.jpg","images/belts/work-utility-buckle.jpg","images/belts/work-utility-keeper.jpg","images/belts/work-utility-folded.jpg"]
+      },
+      {
+        id: "woven-casual", name: "The Woven Casual", price: "$ 86.00",
+        desc: "Tan leather strands hand-braided into a flexible weave, finished with an antiqued brass D-ring closure for a relaxed fit.",
+        specs: ["Hand-braided leather", "Antiqued brass D-ring", "One-size adjustable"],
+        video: "videos/belts/woven-casual.mp4",
+        images: ["images/belts/woven-casual.jpg","images/belts/woven-casual-weave-detail.jpg","images/belts/woven-casual-dring.jpg","images/belts/woven-casual-folded.jpg"]
+      },
+      {
+        id: "reversible-formal", name: "The Reversible Formal", price: "$ 134.00",
+        desc: "Black on one face, chestnut on the other, joined seamlessly with a rotating buckle plate. Two belts in a single strap of hide.",
+        specs: ["Dual-face construction", "Rotating buckle plate", "Gift box included"],
+        video: "videos/belts/reversible-formal.mp4",
+        images: ["images/belts/reversible-formal.jpg","images/belts/reversible-formal-black-side.jpg","images/belts/reversible-formal-buckle.jpg","images/belts/reversible-formal-giftbox.jpg"]
+      },
+      {
+        id: "skinny-stacked", name: "The Skinny Stacked", price: "$ 74.00",
+        desc: "A narrow 0.8-inch strap in burnished cognac, finished with a slim stacked-edge buckle designed to sit flush under a belt loop.",
+        specs: ["Cognac leather, 0.8\" width", "Slim stacked-edge buckle", "Hand-burnished edges"],
+        video: "videos/belts/skinny-stacked.mp4",
+        images: ["images/belts/skinny-stacked.jpg","images/belts/skinny-stacked-buckle.jpg","images/belts/skinny-stacked-edge.jpg","images/belts/skinny-stacked-folded.jpg"]
+      },
+      {
+        id: "western-tooled", name: "The Western Tooled", price: "$ 156.00",
+        desc: "Hand-tooled floral pattern pressed into thick saddle leather, paired with a removable engraved silver-tone buckle.",
+        specs: ["Hand-tooled saddle leather", "Removable engraved buckle", "1.5\" width"],
+        video: "videos/belts/western-tooled.mp4",
+        images: ["images/belts/western-tooled.jpg","images/belts/western-tooled-tooling-detail.jpg","images/belts/western-tooled-buckle.jpg","images/belts/western-tooled-folded.jpg"]
+      },
+      {
+        id: "minimalist-rail", name: "The Minimalist Rail", price: "$ 102.00",
+        desc: "A clean, hole-free ratchet-track belt in matte black leather, adjustable in fine increments via a low-profile sliding buckle.",
+        specs: ["Matte black leather", "Hole-free ratchet track", "Low-profile sliding buckle"],
+        video: "videos/belts/minimalist-rail.mp4",
+        images: ["images/belts/minimalist-rail.jpg","images/belts/minimalist-rail-buckle.jpg","images/belts/minimalist-rail-track.jpg","images/belts/minimalist-rail-folded.jpg"]
+      },
+      {
+        id: "canvas-trim", name: "The Canvas Trim", price: "$ 92.00",
+        desc: "Olive waxed canvas center strip flanked by leather edge trim, with a matte brass frame buckle for a rugged, utilitarian look.",
+        specs: ["Waxed canvas & leather trim", "Matte brass frame buckle", "1.25\" width"],
+        video: "videos/belts/canvas-trim.mp4",
+        images: ["images/belts/canvas-trim.jpg","images/belts/canvas-trim-buckle.jpg","images/belts/canvas-trim-edge.jpg","images/belts/canvas-trim-folded.jpg"]
+      }
+    ],
+    wallets: [
+      {
+        id: "bifold-classic", name: "The Classic Bifold", price: "$ 68.00",
+        desc: "Cognac full-grain hide with six card slots and a hidden currency pocket. Breaks in to a thin, pocket-shaped curve within weeks.",
+        specs: ["Full-grain leather", "6 card slots + bill pocket", "RFID-shielding layer"],
+        video: "videos/wallets/bifold-classic.mp4",
+        images: ["images/wallets/bifold-classic.jpg","images/wallets/bifold-classic-closed.jpg","images/wallets/bifold-classic-cards.jpg","images/wallets/bifold-classic-pocket.jpg"]
+      },
+      {
+        id: "cardholder-slim", name: "The Slim Cardholder", price: "$ 48.00",
+        desc: "A single fold of black calfskin holding four cards and folded notes, under 4mm thick. Disappears into a front pocket.",
+        specs: ["Calfskin, single-fold", "4 card capacity", "Under 4mm thickness"],
+        video: "videos/wallets/cardholder-slim.mp4",
+        images: ["images/wallets/cardholder-slim.jpg","images/wallets/cardholder-slim-side.jpg","images/wallets/cardholder-slim-cards.jpg","images/wallets/cardholder-slim-pocket.jpg"]
+      },
+      {
+        id: "zip-travel", name: "The Zip Travel Wallet", price: "$ 96.00",
+        desc: "Brown bridle leather organiser with a passport sleeve, boarding-pass slot, and full perimeter zip in matte brass.",
+        specs: ["Bridle leather", "Passport & ticket slots", "Full-perimeter zip"],
+        video: "videos/wallets/zip-travel.mp4",
+        images: ["images/wallets/zip-travel.jpg","images/wallets/zip-travel-open.jpg","images/wallets/zip-travel-passport.jpg","images/wallets/zip-travel-zip-detail.jpg"]
+      },
+      {
+        id: "long-trifold", name: "The Long Trifold", price: "$ 79.00",
+        desc: "Chestnut leather trifold with a checkbook pocket and eight card slots — built for those who carry more than a card and a note.",
+        specs: ["Chestnut top-grain hide", "8 card slots", "Checkbook pocket"],
+        video: "videos/wallets/long-trifold.mp4",
+        images: ["images/wallets/long-trifold.jpg","images/wallets/long-trifold-closed.jpg","images/wallets/long-trifold-checkbook.jpg","images/wallets/long-trifold-cards.jpg"]
+      },
+      {
+        id: "money-clip", name: "The Money Clip Wallet", price: "$ 58.00",
+        desc: "A compact front-pocket wallet pairing two card pockets with a stainless spring clip, holding folded bills flat against the leather.",
+        specs: ["Top-grain leather", "Stainless spring money clip", "2 card pockets"],
+        video: "videos/wallets/money-clip.mp4",
+        images: ["images/wallets/money-clip.jpg","images/wallets/money-clip-back.jpg","images/wallets/money-clip-clip-detail.jpg","images/wallets/money-clip-cards.jpg"]
+      },
+      {
+        id: "zip-coin-pouch", name: "The Zip Coin Pouch", price: "$ 38.00",
+        desc: "A small, soft-sided pouch in pebbled lambskin with a brass zip pull, sized for coins, earbuds, or a spare key.",
+        specs: ["Pebbled lambskin", "Brass zip pull", "Soft fabric lining"],
+        video: "videos/wallets/zip-coin-pouch.mp4",
+        images: ["images/wallets/zip-coin-pouch.jpg","images/wallets/zip-coin-pouch-open.jpg","images/wallets/zip-coin-pouch-lining.jpg","images/wallets/zip-coin-pouch-zip.jpg"]
+      },
+      {
+        id: "passport-sleeve", name: "The Passport Sleeve", price: "$ 54.00",
+        desc: "A snug single-pocket sleeve in tan vegetable-tanned hide, sized exactly to a passport with one slot for a boarding pass or card.",
+        specs: ["Vegetable-tanned hide", "Snug passport fit", "1 card / boarding-pass slot"],
+        video: "videos/wallets/passport-sleeve.mp4",
+        images: ["images/wallets/passport-sleeve.jpg","images/wallets/passport-sleeve-open.jpg","images/wallets/passport-sleeve-slot.jpg","images/wallets/passport-sleeve-edge.jpg"]
+      },
+      {
+        id: "ladies-clutch-wallet", name: "The Ladies' Clutch Wallet", price: "$ 112.00",
+        desc: "An organiser-style wallet in soft pebbled leather with a wrist strap, twelve card slots, a zip coin pocket, and a phone-sized center bay.",
+        specs: ["Pebbled leather", "12 card slots + coin zip", "Detachable wrist strap"],
+        video: "videos/wallets/ladies-clutch-wallet.mp4",
+        images: ["images/wallets/ladies-clutch-wallet.jpg","images/wallets/ladies-clutch-wallet-open.jpg","images/wallets/ladies-clutch-wallet-strap.jpg","images/wallets/ladies-clutch-wallet-cards.jpg"]
+      }
+    ]
+  };
+
+  var CATEGORY_LABELS = { bags: "Bags", jackets: "Jackets", belts: "Belts", wallets: "Wallets" };
+
+  var WATCH_ICON = '<svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>';
+  var EXPAND_ICON = '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  /* ---------- BUILD PRODUCT GRIDS FROM DATA ---------- */
+  function buildProductGrids(){
+    Object.keys(PRODUCT_DATA).forEach(function(catKey){
+      var grid = document.getElementById(catKey + 'Grid');
+      if (!grid) return;
+      var catLabel = CATEGORY_LABELS[catKey] || catKey;
+
+      PRODUCT_DATA[catKey].forEach(function(item){
+        var article = document.createElement('article');
+        article.className = 'product-card';
+        article.setAttribute('tabindex', '0');
+        article.setAttribute('data-id', item.id);
+        article.setAttribute('data-cat', catLabel);
+        article.setAttribute('data-name', item.name);
+        article.setAttribute('data-price', item.price);
+        article.setAttribute('data-desc', item.desc);
+        article.setAttribute('data-video', item.video || '');
+        article.setAttribute('data-images', JSON.stringify(item.images || []));
+
+        var firstImage = (item.images && item.images[0]) || '';
+        var specsHtml = (item.specs || []).map(function(s){ return '<li>' + s + '</li>'; }).join('');
+
+        article.innerHTML =
+          '<div class="product-media">' +
+            '<img src="' + firstImage + '" alt="AMS ' + item.name + '" loading="lazy">' +
+            '<span class="rivet rivet-tl"></span><span class="rivet rivet-tr"></span>' +
+            '<span class="media-expand" aria-hidden="true">' + EXPAND_ICON + '</span>' +
+          '</div>' +
+          '<div class="product-body">' +
+            '<h3>' + item.name + '</h3>' +
+            '<p>' + item.desc + '</p>' +
+            '<ul class="spec-list">' + specsHtml + '</ul>' +
+            '<div class="product-footer">' +
+              '<span class="price">' + item.price + '</span>' +
+              '<div class="footer-actions">' +
+                '<button class="btn-video" data-action="watch" aria-label="Watch video of ' + item.name + '" title="Visualize it">' + WATCH_ICON + '</button>' +
+                '<button class="btn-outline" data-action="enquire">Enquire</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+
+        grid.appendChild(article);
+      });
+    });
+  }
+
+  buildProductGrids();
 
   /* ---------- 3D CAROUSEL ---------- */
   var track = document.getElementById('carouselTrack');
@@ -1991,7 +1772,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     if (lastFocusedEl) lastFocusedEl.focus();
   }
 
-  document.querySelectorAll('.product-card').forEach(function(card){
+  function attachCardHandlers(card){
     card.addEventListener('click', function(e){
       // don't open the gallery if the click was on the video or enquire button
       if (e.target.closest('[data-action="watch"]') || e.target.closest('[data-action="enquire"]')) return;
@@ -2019,7 +1800,9 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
         window.location.hash = 'contact';
       });
     }
-  });
+  }
+
+  document.querySelectorAll('.product-card').forEach(attachCardHandlers);
 
   modalPrevImg.addEventListener('click', function(){ setMainImage(activeImgIndex - 1); });
   modalNextImg.addEventListener('click', function(){ setMainImage(activeImgIndex + 1); });

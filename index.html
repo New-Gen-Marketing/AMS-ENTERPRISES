@@ -37,7 +37,7 @@
 }
 
 *{ margin:0; padding:0; box-sizing:border-box; }
-html{ scroll-behavior:smooth; }
+html{ scroll-behavior:smooth; overflow-x:hidden; max-width:100%; }
 
 body{
   background: var(--saddle-black);
@@ -47,10 +47,10 @@ body{
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  max-width: 100%;
   position: relative;
 }
 
-/* subtle ambient leather-grain wash across the whole page */
 body::before{
   content:"";
   position: fixed; inset:0;
@@ -166,6 +166,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   display:flex;
   flex-direction: column;
   gap: 2.4rem;
+  overflow: hidden; /* FIX: contain carousel 3D overflow */
 }
 
 .hero-copy{ max-width: 640px; }
@@ -194,6 +195,8 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   display:flex;
   flex-direction: column;
   align-items:center;
+  overflow: hidden; /* FIX: clip offscreen 3D cards so page doesn't widen */
+  width: 100%;
 }
 
 .carousel-stage{
@@ -204,6 +207,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   outline: none;
   touch-action: pan-y;
   cursor: grab;
+  overflow: hidden; /* FIX: prevent transformed cards expanding scrollable area */
 }
 .carousel-stage:active{ cursor: grabbing; }
 .carousel-stage:focus-visible{
@@ -236,7 +240,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   transform-style: preserve-3d;
 }
 
-/* saddle-stitch border */
 .leather-card::before{
   content:"";
   position:absolute; inset:10px;
@@ -244,7 +247,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   border-radius: 8px;
   pointer-events:none;
 }
-/* sheen sweep */
 .leather-card::after{
   content:"";
   position:absolute; inset:0;
@@ -280,7 +282,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   user-select: none;
   -webkit-user-drag: none;
 }
-/* fallback glyph sits in the same slot, hidden unless the image 404s */
 .card-glyph-fallback{
   display: none;
   width: 100%;
@@ -288,9 +289,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   filter: drop-shadow(0 8px 18px rgba(0,0,0,0.4));
 }
 
-/* the 3D rotate-in: plays on the card's render layer the moment it
-   becomes the active (centered) slide. translateZ keeps the turn
-   feeling like the object is spinning in place, not flattening out. */
 @keyframes cardSpinIn{
   0%   { transform: translate(-50%,-58%) rotateY(0deg)    translateZ(0px)  scale(1); }
   45%  { transform: translate(-50%,-58%) rotateY(-160deg) translateZ(60px) scale(0.92); }
@@ -428,8 +426,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 }
 
 /* =========================================================
-   SUB-CATEGORY NAV + BLOCKS (used for Leather Jackets: ten
-   styles, each split into a women's and men's row of 4)
+   SUB-CATEGORY NAV + BLOCKS
    ========================================================= */
 .subcat-nav{
   display:flex;
@@ -528,24 +525,17 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 }
 
 /* ---------------------------------------------------------
-   IMAGE "STAGE" — used by both the grid thumbnail and the
-   modal's main image. Any image you drop into a data-* path,
-   regardless of its native aspect ratio (wide photo, tall
-   photo, square render, or a transparent isolated cutout
-   PNG), is shown in full via object-fit: contain, centered on
-   a consistent leather-toned backdrop with inset padding. This
-   guarantees nothing is ever cropped or stretched, and every
-   product — photographed or isolated on transparent — reads
-   the same way on the card.
+   IMAGE STAGE — FIX: square ratio + tight padding so product
+   fills the card regardless of source image dimensions.
    --------------------------------------------------------- */
 .product-media{
   position: relative;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1; /* FIX: was 4/3 — square gives more height */
   background:
     radial-gradient(120% 130% at 50% 0%, rgba(255,255,255,0.05), transparent 60%),
     linear-gradient(150deg, #3a2818, #211611);
   overflow:hidden;
-  padding: 10%;
+  padding: 5%; /* FIX: was 10% — tighter = bigger image */
 }
 .product-media img{
   width:100%; height:100%;
@@ -565,7 +555,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 .rivet-tl{ top:10px; left:10px; }
 .rivet-tr{ top:10px; right:10px; }
 
-/* "expand" affordance, top-right of the media, hints the card opens a gallery */
 .media-expand{
   position:absolute; bottom:10px; right:10px;
   z-index: 3;
@@ -642,7 +631,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 }
 .btn-outline:hover{ border-color: var(--brass); color: var(--saddle-black); background: var(--brass); }
 
-/* "Visualize it" video trigger — small icon button beside Enquire */
 .btn-video{
   display:flex; align-items:center; justify-content:center;
   width: 36px; height: 36px;
@@ -737,7 +725,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   background:
     radial-gradient(120% 130% at 50% 0%, rgba(255,255,255,0.05), transparent 60%),
     linear-gradient(150deg, #3a2818, #211611);
-  padding: 8%;
+  padding: 3%; /* FIX: was 8% — product now fills most of the popup */
 }
 .modal-gallery-main img{
   width:100%; height:100%;
@@ -775,7 +763,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     linear-gradient(150deg, #3a2818, #211611);
   transition: border-color 0.25s var(--ease), opacity 0.25s var(--ease);
   opacity: 0.7;
-  padding: 12%;
+  padding: 6%; /* FIX: was 12% */
 }
 .modal-thumb img{
   width:100%; height:100%;
@@ -962,7 +950,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   .subcat-block{ margin-bottom: 3.2rem; }
   .subcat-block-head{ flex-direction: column; align-items: flex-start; gap: 0.3rem; }
 
-  /* ---------- PRODUCT GALLERY MODAL: full-screen sheet on mobile ---------- */
   .modal-overlay{ padding: 0; align-items: flex-end; }
   .modal-panel{
     width: 100%;
@@ -1005,7 +992,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     font-size: 0.85rem;
   }
 
-  /* ---------- VIDEO MODAL: edge-to-edge on mobile ---------- */
   .video-overlay{ padding: 0; align-items: center; }
   .video-panel{ max-width: 100%; padding: 0 0.6rem; }
   .video-frame{ border-radius: 10px; }
@@ -1077,7 +1063,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 
   <div class="carousel-wrap">
     <div class="carousel-stage" id="carouselStage" tabindex="0" aria-roledescription="carousel" aria-label="Featured leather products">
-      <div class="carousel-track" id="carouselTrack"><!-- cards injected by JS --></div>
+      <div class="carousel-track" id="carouselTrack"></div>
     </div>
 
     <div class="carousel-controls">
@@ -1102,7 +1088,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     <h2>Leather Bags</h2>
     <p class="cat-desc">Structured totes and satchels in full-grain hide, built around a steel-framed interior so the shape holds for life.</p>
   </div>
-  <div class="product-grid" id="bagsGrid"><!-- 8 cards injected by JS --></div>
+  <div class="product-grid" id="bagsGrid"></div>
 </section>
 
 <div class="stitched-divider" aria-hidden="true"></div>
@@ -1115,9 +1101,9 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     <p class="cat-desc">Drum-dyed lambskin and steerhide outerwear, pattern-cut in-house and finished with hand-burnished seams — ten silhouettes, each in four cuts for women and four for men.</p>
   </div>
 
-  <nav class="subcat-nav" id="jacketSubNav" aria-label="Jacket style"><!-- pills injected by JS --></nav>
+  <nav class="subcat-nav" id="jacketSubNav" aria-label="Jacket style"></nav>
 
-  <div id="jacketSubcats"><!-- sub-category blocks injected by JS --></div>
+  <div id="jacketSubcats"></div>
 </section>
 
 <div class="stitched-divider" aria-hidden="true"></div>
@@ -1129,7 +1115,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     <h2>Leather Belts</h2>
     <p class="cat-desc">Single-piece hide belts, edge-painted and burnished by hand, fitted with solid cast hardware.</p>
   </div>
-  <div class="product-grid" id="beltsGrid"><!-- 8 cards injected by JS --></div>
+  <div class="product-grid" id="beltsGrid"></div>
 </section>
 
 <div class="stitched-divider" aria-hidden="true"></div>
@@ -1141,7 +1127,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     <h2>Leather Wallets</h2>
     <p class="cat-desc">Slim, pocket-first wallets cut from offcuts of our bag leather — nothing from the hide goes to waste.</p>
   </div>
-  <div class="product-grid" id="walletsGrid"><!-- 8 cards injected by JS --></div>
+  <div class="product-grid" id="walletsGrid"></div>
 </section>
 
 <!-- ===================== FOOTER ===================== -->
@@ -1194,7 +1180,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
           <svg viewBox="0 0 24 24" width="18" height="18"><path d="M9 4 L17 12 L9 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
       </div>
-      <div class="modal-thumbs" id="modalThumbs"><!-- 4 thumbs injected by JS --></div>
+      <div class="modal-thumbs" id="modalThumbs"></div>
     </div>
 
     <p class="modal-body-text" id="modalDesc">Description...</p>
@@ -1223,13 +1209,9 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 </div>
 
 <script>
-/* =========================================================
-   AMS ENTERPRISES — interactions
-   ========================================================= */
 (function(){
   "use strict";
 
-  /* ---------- DATA: hero carousel items (featured picks) ---------- */
   var CARD_DATA = [
     {
       cat: "Bags", name: "Heritage Satchel", price: "$ 428.00",
@@ -1275,15 +1257,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     }
   ];
 
-  /* =========================================================
-     DATA: product grids (8 cards per category)
-     Drop any image into these paths — wide photos, tall
-     photos, square renders, or transparent isolated cutout
-     PNGs all display correctly. The card and modal "stage"
-     uses object-fit: contain on a fixed-ratio backdrop, so
-     nothing is ever cropped or distorted regardless of the
-     source image's native dimensions.
-     ========================================================= */
   var PRODUCT_DATA = {
     bags: [
       {
@@ -1461,340 +1434,165 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     ]
   };
 
-  /* =========================================================
-     DATA: Leather Jackets — ten sub-categories, each with
-     4 women's cuts and 4 men's cuts (8 cards per style, 80
-     total).
-
-     EVERY jacket below now has its own explicit "images"
-     array (4 paths) and "video" path, exactly like Bags /
-     Belts / Wallets above. To add your photos and clips for
-     a jacket, just drop your files at the paths already
-     written here — or edit the path strings themselves to
-     match whatever filenames you already have. Any image
-     aspect ratio works (wide photo, tall photo, square
-     render, or a transparent cutout PNG) because the card
-     and modal use object-fit: contain.
-     ========================================================= */
   var JACKET_SUBCATEGORIES = [
     {
       key: "biker", label: "Biker Jackets",
       blurb: "Asymmetric zips and quilted panels, cut close to the body in drum-dyed lambskin and steerhide.",
       women: [
-        { id: "biker-classic-moto-w", name: "Classic Moto Jacket — Women's", price: "$ 268.00", desc: "Black lambskin moto jacket with an asymmetric zip, quilted shoulder panels, and a removable waist belt.", specs: ["Black lambskin", "Asymmetric front zip", "Removable belt"],
-          video: "videos/jackets/biker/biker-classic-moto-w.mp4",
-          images: ["images/jackets/biker/biker-classic-moto-w-1.jpg","images/jackets/biker/biker-classic-moto-w-2.jpg","images/jackets/biker/biker-classic-moto-w-3.jpg","images/jackets/biker/biker-classic-moto-w-4.jpg"] },
-        { id: "biker-cropped-studded-w", name: "Cropped Studded Biker — Women's", price: "$ 298.00", desc: "A cropped biker silhouette finished with hand-set studs along the lapel and a nipped-in waist seam.", specs: ["Top-grain lambskin", "Hand-set stud trim", "Cropped, fitted cut"],
-          video: "videos/jackets/biker/biker-cropped-studded-w.mp4",
-          images: ["images/jackets/biker/biker-cropped-studded-w-1.jpg","images/jackets/biker/biker-cropped-studded-w-2.jpg","images/jackets/biker/biker-cropped-studded-w-3.jpg","images/jackets/biker/biker-cropped-studded-w-4.jpg"] },
-        { id: "biker-collarless-w", name: "Collarless Biker — Women's", price: "$ 282.00", desc: "A clean collarless biker with a diagonal zip and slim ribbed cuffs, built for a streamlined silhouette.", specs: ["Collarless neckline", "Diagonal front zip", "Ribbed cuff trim"],
-          video: "videos/jackets/biker/biker-collarless-w.mp4",
-          images: ["images/jackets/biker/biker-collarless-w-1.jpg","images/jackets/biker/biker-collarless-w-2.jpg","images/jackets/biker/biker-collarless-w-3.jpg","images/jackets/biker/biker-collarless-w-4.jpg"] },
-        { id: "biker-belted-longline-w", name: "Belted Longline Biker — Women's", price: "$ 324.00", desc: "An elongated biker jacket with a self-fabric belt and dual zip pockets, falling just past the hip.", specs: ["Longline hip-length cut", "Self-fabric belt", "Dual zip pockets"],
-          video: "videos/jackets/biker/biker-belted-longline-w.mp4",
-          images: ["images/jackets/biker/biker-belted-longline-w-1.jpg","images/jackets/biker/biker-belted-longline-w-2.jpg","images/jackets/biker/biker-belted-longline-w-3.jpg","images/jackets/biker/biker-belted-longline-w-4.jpg"] }
+        { id: "biker-classic-moto-w", name: "Classic Moto Jacket — Women's", price: "$ 268.00", desc: "Black lambskin moto jacket with an asymmetric zip, quilted shoulder panels, and a removable waist belt.", specs: ["Black lambskin", "Asymmetric front zip", "Removable belt"], video: "videos/jackets/biker/biker-classic-moto-w.mp4", images: ["images/jackets/biker/biker-classic-moto-w-1.jpg","images/jackets/biker/biker-classic-moto-w-2.jpg","images/jackets/biker/biker-classic-moto-w-3.jpg","images/jackets/biker/biker-classic-moto-w-4.jpg"] },
+        { id: "biker-cropped-studded-w", name: "Cropped Studded Biker — Women's", price: "$ 298.00", desc: "A cropped biker silhouette finished with hand-set studs along the lapel and a nipped-in waist seam.", specs: ["Top-grain lambskin", "Hand-set stud trim", "Cropped, fitted cut"], video: "videos/jackets/biker/biker-cropped-studded-w.mp4", images: ["images/jackets/biker/biker-cropped-studded-w-1.jpg","images/jackets/biker/biker-cropped-studded-w-2.jpg","images/jackets/biker/biker-cropped-studded-w-3.jpg","images/jackets/biker/biker-cropped-studded-w-4.jpg"] },
+        { id: "biker-collarless-w", name: "Collarless Biker — Women's", price: "$ 282.00", desc: "A clean collarless biker with a diagonal zip and slim ribbed cuffs, built for a streamlined silhouette.", specs: ["Collarless neckline", "Diagonal front zip", "Ribbed cuff trim"], video: "videos/jackets/biker/biker-collarless-w.mp4", images: ["images/jackets/biker/biker-collarless-w-1.jpg","images/jackets/biker/biker-collarless-w-2.jpg","images/jackets/biker/biker-collarless-w-3.jpg","images/jackets/biker/biker-collarless-w-4.jpg"] },
+        { id: "biker-belted-longline-w", name: "Belted Longline Biker — Women's", price: "$ 324.00", desc: "An elongated biker jacket with a self-fabric belt and dual zip pockets, falling just past the hip.", specs: ["Longline hip-length cut", "Self-fabric belt", "Dual zip pockets"], video: "videos/jackets/biker/biker-belted-longline-w.mp4", images: ["images/jackets/biker/biker-belted-longline-w-1.jpg","images/jackets/biker/biker-belted-longline-w-2.jpg","images/jackets/biker/biker-belted-longline-w-3.jpg","images/jackets/biker/biker-belted-longline-w-4.jpg"] }
       ],
       men: [
-        { id: "biker-classic-moto-m", name: "Men's Black Biker Genuine Leather Jacket", price: "$ 70.00", desc: "Belt style waist, stylish shoulder epaulettes, and silver hardware including zippers and buttons.", specs: ["Premium sheepskin", "Soft polyester lining", "Notch lapel collar with snap buttons"],
-          video: "videos/jackets/biker/biker-classic-moto-m.mp4",
-          images: ["mens-black-biker-genuine-leather-jacket.webp","Black-Mens-Biker-Genuine-Leather-Jacket back.webp","images/jackets/biker/biker-classic-moto-m-3.jpg","images/jackets/biker/biker-classic-moto-m-4.jpg"] },
-        { id: "biker-cafe-racer-m", name: "Café Racer Biker — Men's", price: "$ 338.00", desc: "A minimal collarless racer cut in tan steerhide, with a single diagonal zip and snap-tab side adjusters.", specs: ["Tan steerhide", "Collarless racer cut", "Snap-tab side adjusters"],
-          video: "videos/jackets/biker/biker-cafe-racer-m.mp4",
-          images: ["images/jackets/biker/biker-cafe-racer-m-1.jpg","images/jackets/biker/biker-cafe-racer-m-2.jpg","images/jackets/biker/biker-cafe-racer-m-3.jpg","images/jackets/biker/biker-cafe-racer-m-4.jpg"] },
-        { id: "biker-quilted-panel-m", name: "Quilted Panel Biker — Men's", price: "$ 356.00", desc: "Diamond-quilted shoulder and elbow panels over a structured black hide shell, built for a hard-wearing ride.", specs: ["Quilted shoulder/elbow panels", "Structured black hide", "Reinforced stitching"],
-          video: "videos/jackets/biker/biker-quilted-panel-m.mp4",
-          images: ["images/jackets/biker/biker-quilted-panel-m-1.jpg","images/jackets/biker/biker-quilted-panel-m-2.jpg","images/jackets/biker/biker-quilted-panel-m-3.jpg","images/jackets/biker/biker-quilted-panel-m-4.jpg"] },
-        { id: "biker-vintage-distressed-m", name: "Vintage Distressed Biker — Men's", price: "$ 365.00", desc: "Hand-distressed cowhide with a broken-in patina from day one, paired with antiqued brass hardware.", specs: ["Hand-distressed cowhide", "Antiqued brass hardware", "Worn-in patina finish"],
-          video: "videos/jackets/biker/biker-vintage-distressed-m.mp4",
-          images: ["images/jackets/biker/biker-vintage-distressed-m-1.jpg","images/jackets/biker/biker-vintage-distressed-m-2.jpg","images/jackets/biker/biker-vintage-distressed-m-3.jpg","images/jackets/biker/biker-vintage-distressed-m-4.jpg"] }
+        { id: "biker-classic-moto-m", name: "Men's Black Biker Genuine Leather Jacket", price: "$ 70.00", desc: "Belt style waist, stylish shoulder epaulettes, and silver hardware including zippers and buttons.", specs: ["Premium sheepskin", "Soft polyester lining", "Notch lapel collar with snap buttons"], video: "videos/jackets/biker/biker-classic-moto-m.mp4", images: ["mens-black-biker-genuine-leather-jacket.webp","Black-Mens-Biker-Genuine-Leather-Jacket back.webp","images/jackets/biker/biker-classic-moto-m-3.jpg","images/jackets/biker/biker-classic-moto-m-4.jpg"] },
+        { id: "biker-cafe-racer-m", name: "Café Racer Biker — Men's", price: "$ 338.00", desc: "A minimal collarless racer cut in tan steerhide, with a single diagonal zip and snap-tab side adjusters.", specs: ["Tan steerhide", "Collarless racer cut", "Snap-tab side adjusters"], video: "videos/jackets/biker/biker-cafe-racer-m.mp4", images: ["images/jackets/biker/biker-cafe-racer-m-1.jpg","images/jackets/biker/biker-cafe-racer-m-2.jpg","images/jackets/biker/biker-cafe-racer-m-3.jpg","images/jackets/biker/biker-cafe-racer-m-4.jpg"] },
+        { id: "biker-quilted-panel-m", name: "Quilted Panel Biker — Men's", price: "$ 356.00", desc: "Diamond-quilted shoulder and elbow panels over a structured black hide shell, built for a hard-wearing ride.", specs: ["Quilted shoulder/elbow panels", "Structured black hide", "Reinforced stitching"], video: "videos/jackets/biker/biker-quilted-panel-m.mp4", images: ["images/jackets/biker/biker-quilted-panel-m-1.jpg","images/jackets/biker/biker-quilted-panel-m-2.jpg","images/jackets/biker/biker-quilted-panel-m-3.jpg","images/jackets/biker/biker-quilted-panel-m-4.jpg"] },
+        { id: "biker-vintage-distressed-m", name: "Vintage Distressed Biker — Men's", price: "$ 365.00", desc: "Hand-distressed cowhide with a broken-in patina from day one, paired with antiqued brass hardware.", specs: ["Hand-distressed cowhide", "Antiqued brass hardware", "Worn-in patina finish"], video: "videos/jackets/biker/biker-vintage-distressed-m.mp4", images: ["images/jackets/biker/biker-vintage-distressed-m-1.jpg","images/jackets/biker/biker-vintage-distressed-m-2.jpg","images/jackets/biker/biker-vintage-distressed-m-3.jpg","images/jackets/biker/biker-vintage-distressed-m-4.jpg"] }
       ]
     },
     {
       key: "bomber", label: "Bomber Jackets",
       blurb: "Ribbed hems and cuffs on a relaxed shell — the everyday layer that goes from morning to night.",
       women: [
-        { id: "bomber-brown-classic-w", name: "Brown Leather Bomber — Women's", price: "$ 80.00", desc: "Statement bomber with a ribbed hemline, shoulder epaulettes, silver zippers and quilted sheepskin sleeves.", specs: ["Real leather", "100% sheepskin", "Ribbed shirt-style collar"],
-          video: "videos/jackets/bomber/bomber-brown-classic-w.mp4",
-          images: ["images/jackets/bomber/bomber-brown-classic-w-1.jpg","images/jackets/bomber/bomber-brown-classic-w-2.jpg","images/jackets/bomber/bomber-brown-classic-w-3.jpg","images/jackets/bomber/bomber-brown-classic-w-4.jpg"] },
-        { id: "bomber-cropped-pastel-w", name: "Cropped Pastel Bomber — Women's", price: "$ 218.00", desc: "A cropped bomber in soft lambskin with a relaxed drop shoulder and elastic ribbed trims throughout.", specs: ["Soft lambskin", "Drop-shoulder cut", "Elastic ribbed trims"],
-          video: "videos/jackets/bomber/bomber-cropped-pastel-w.mp4",
-          images: ["images/jackets/bomber/bomber-cropped-pastel-w-1.jpg","images/jackets/bomber/bomber-cropped-pastel-w-2.jpg","images/jackets/bomber/bomber-cropped-pastel-w-3.jpg","images/jackets/bomber/bomber-cropped-pastel-w-4.jpg"] },
-        { id: "bomber-quilted-liner-w", name: "Quilted-Liner Bomber — Women's", price: "$ 256.00", desc: "A warmer bomber with a quilted satin liner and a stand collar, sized for layering over knitwear.", specs: ["Quilted satin lining", "Stand collar", "Relaxed layering fit"],
-          video: "videos/jackets/bomber/bomber-quilted-liner-w.mp4",
-          images: ["images/jackets/bomber/bomber-quilted-liner-w-1.jpg","images/jackets/bomber/bomber-quilted-liner-w-2.jpg","images/jackets/bomber/bomber-quilted-liner-w-3.jpg","images/jackets/bomber/bomber-quilted-liner-w-4.jpg"] },
-        { id: "bomber-belted-waist-w", name: "Belted Waist Bomber — Women's", price: "$ 238.00", desc: "A bomber reworked with a self-tie waist belt, softening the boxy shape into a more fitted line.", specs: ["Self-tie waist belt", "Softened boxy shape", "Ribbed cuffs and hem"],
-          video: "videos/jackets/bomber/bomber-belted-waist-w.mp4",
-          images: ["images/jackets/bomber/bomber-belted-waist-w-1.jpg","images/jackets/bomber/bomber-belted-waist-w-2.jpg","images/jackets/bomber/bomber-belted-waist-w-3.jpg","images/jackets/bomber/bomber-belted-waist-w-4.jpg"] }
+        { id: "bomber-brown-classic-w", name: "Brown Leather Bomber — Women's", price: "$ 80.00", desc: "Statement bomber with a ribbed hemline, shoulder epaulettes, silver zippers and quilted sheepskin sleeves.", specs: ["Real leather", "100% sheepskin", "Ribbed shirt-style collar"], video: "videos/jackets/bomber/bomber-brown-classic-w.mp4", images: ["images/jackets/bomber/bomber-brown-classic-w-1.jpg","images/jackets/bomber/bomber-brown-classic-w-2.jpg","images/jackets/bomber/bomber-brown-classic-w-3.jpg","images/jackets/bomber/bomber-brown-classic-w-4.jpg"] },
+        { id: "bomber-cropped-pastel-w", name: "Cropped Pastel Bomber — Women's", price: "$ 218.00", desc: "A cropped bomber in soft lambskin with a relaxed drop shoulder and elastic ribbed trims throughout.", specs: ["Soft lambskin", "Drop-shoulder cut", "Elastic ribbed trims"], video: "videos/jackets/bomber/bomber-cropped-pastel-w.mp4", images: ["images/jackets/bomber/bomber-cropped-pastel-w-1.jpg","images/jackets/bomber/bomber-cropped-pastel-w-2.jpg","images/jackets/bomber/bomber-cropped-pastel-w-3.jpg","images/jackets/bomber/bomber-cropped-pastel-w-4.jpg"] },
+        { id: "bomber-quilted-liner-w", name: "Quilted-Liner Bomber — Women's", price: "$ 256.00", desc: "A warmer bomber with a quilted satin liner and a stand collar, sized for layering over knitwear.", specs: ["Quilted satin lining", "Stand collar", "Relaxed layering fit"], video: "videos/jackets/bomber/bomber-quilted-liner-w.mp4", images: ["images/jackets/bomber/bomber-quilted-liner-w-1.jpg","images/jackets/bomber/bomber-quilted-liner-w-2.jpg","images/jackets/bomber/bomber-quilted-liner-w-3.jpg","images/jackets/bomber/bomber-quilted-liner-w-4.jpg"] },
+        { id: "bomber-belted-waist-w", name: "Belted Waist Bomber — Women's", price: "$ 238.00", desc: "A bomber reworked with a self-tie waist belt, softening the boxy shape into a more fitted line.", specs: ["Self-tie waist belt", "Softened boxy shape", "Ribbed cuffs and hem"], video: "videos/jackets/bomber/bomber-belted-waist-w.mp4", images: ["images/jackets/bomber/bomber-belted-waist-w-1.jpg","images/jackets/bomber/bomber-belted-waist-w-2.jpg","images/jackets/bomber/bomber-belted-waist-w-3.jpg","images/jackets/bomber/bomber-belted-waist-w-4.jpg"] }
       ],
       men: [
-        { id: "bomber-aviator-shearling-m", name: "Aviator Shearling Bomber — Men's", price: "$ 720.00", desc: "Tan steerhide shell lined in genuine shearling, with knit cuffs and hem for a close, warm fit.", specs: ["Steerhide shell", "Genuine shearling lining", "Ribbed knit cuffs"],
-          video: "videos/jackets/bomber/bomber-aviator-shearling-m.mp4",
-          images: ["images/jackets/bomber/bomber-aviator-shearling-m-1.jpg","images/jackets/bomber/bomber-aviator-shearling-m-2.jpg","images/jackets/bomber/bomber-aviator-shearling-m-3.jpg","images/jackets/bomber/bomber-aviator-shearling-m-4.jpg"] },
-        { id: "bomber-classic-flight-m", name: "Classic Flight Bomber — Men's", price: "$ 298.00", desc: "A flight-jacket bomber in black lambskin with a zip chest pocket and a snap-tab collar.", specs: ["Black lambskin", "Zip chest pocket", "Snap-tab collar"],
-          video: "videos/jackets/bomber/bomber-classic-flight-m.mp4",
-          images: ["images/jackets/bomber/bomber-classic-flight-m-1.jpg","images/jackets/bomber/bomber-classic-flight-m-2.jpg","images/jackets/bomber/bomber-classic-flight-m-3.jpg","images/jackets/bomber/bomber-classic-flight-m-4.jpg"] },
-        { id: "bomber-varsity-collar-m", name: "Varsity-Collar Bomber — Men's", price: "$ 284.00", desc: "A bomber with a varsity-style ribbed collar and two-tone hide panels across the chest and sleeves.", specs: ["Two-tone hide panels", "Varsity ribbed collar", "Slash hand pockets"],
-          video: "videos/jackets/bomber/bomber-varsity-collar-m.mp4",
-          images: ["images/jackets/bomber/bomber-varsity-collar-m-1.jpg","images/jackets/bomber/bomber-varsity-collar-m-2.jpg","images/jackets/bomber/bomber-varsity-collar-m-3.jpg","images/jackets/bomber/bomber-varsity-collar-m-4.jpg"] },
-        { id: "bomber-waxed-olive-m", name: "Waxed Olive Bomber — Men's", price: "$ 312.00", desc: "Olive waxed leather bomber with a rugged matte finish and brass snap cuffs for a utility-driven look.", specs: ["Olive waxed leather", "Matte rugged finish", "Brass snap cuffs"],
-          video: "videos/jackets/bomber/bomber-waxed-olive-m.mp4",
-          images: ["images/jackets/bomber/bomber-waxed-olive-m-1.jpg","images/jackets/bomber/bomber-waxed-olive-m-2.jpg","images/jackets/bomber/bomber-waxed-olive-m-3.jpg","images/jackets/bomber/bomber-waxed-olive-m-4.jpg"] }
+        { id: "bomber-aviator-shearling-m", name: "Aviator Shearling Bomber — Men's", price: "$ 720.00", desc: "Tan steerhide shell lined in genuine shearling, with knit cuffs and hem for a close, warm fit.", specs: ["Steerhide shell", "Genuine shearling lining", "Ribbed knit cuffs"], video: "videos/jackets/bomber/bomber-aviator-shearling-m.mp4", images: ["images/jackets/bomber/bomber-aviator-shearling-m-1.jpg","images/jackets/bomber/bomber-aviator-shearling-m-2.jpg","images/jackets/bomber/bomber-aviator-shearling-m-3.jpg","images/jackets/bomber/bomber-aviator-shearling-m-4.jpg"] },
+        { id: "bomber-classic-flight-m", name: "Classic Flight Bomber — Men's", price: "$ 298.00", desc: "A flight-jacket bomber in black lambskin with a zip chest pocket and a snap-tab collar.", specs: ["Black lambskin", "Zip chest pocket", "Snap-tab collar"], video: "videos/jackets/bomber/bomber-classic-flight-m.mp4", images: ["images/jackets/bomber/bomber-classic-flight-m-1.jpg","images/jackets/bomber/bomber-classic-flight-m-2.jpg","images/jackets/bomber/bomber-classic-flight-m-3.jpg","images/jackets/bomber/bomber-classic-flight-m-4.jpg"] },
+        { id: "bomber-varsity-collar-m", name: "Varsity-Collar Bomber — Men's", price: "$ 284.00", desc: "A bomber with a varsity-style ribbed collar and two-tone hide panels across the chest and sleeves.", specs: ["Two-tone hide panels", "Varsity ribbed collar", "Slash hand pockets"], video: "videos/jackets/bomber/bomber-varsity-collar-m.mp4", images: ["images/jackets/bomber/bomber-varsity-collar-m-1.jpg","images/jackets/bomber/bomber-varsity-collar-m-2.jpg","images/jackets/bomber/bomber-varsity-collar-m-3.jpg","images/jackets/bomber/bomber-varsity-collar-m-4.jpg"] },
+        { id: "bomber-waxed-olive-m", name: "Waxed Olive Bomber — Men's", price: "$ 312.00", desc: "Olive waxed leather bomber with a rugged matte finish and brass snap cuffs for a utility-driven look.", specs: ["Olive waxed leather", "Matte rugged finish", "Brass snap cuffs"], video: "videos/jackets/bomber/bomber-waxed-olive-m.mp4", images: ["images/jackets/bomber/bomber-waxed-olive-m-1.jpg","images/jackets/bomber/bomber-waxed-olive-m-2.jpg","images/jackets/bomber/bomber-waxed-olive-m-3.jpg","images/jackets/bomber/bomber-waxed-olive-m-4.jpg"] }
       ]
     },
     {
       key: "varsity", label: "Varsity Jackets",
       blurb: "Letterman silhouettes pairing leather sleeves with wool bodies, finished with ribbed trims.",
       women: [
-        { id: "varsity-wool-leather-w", name: "Wool-Body Varsity — Women's", price: "$ 248.00", desc: "Cream wool body with chestnut leather sleeves and snap-front closure, in a fitted women's cut.", specs: ["Wool body, leather sleeves", "Snap-front closure", "Fitted, cropped length"],
-          video: "videos/jackets/varsity/varsity-wool-leather-w.mp4",
-          images: ["images/jackets/varsity/varsity-wool-leather-w-1.jpg","images/jackets/varsity/varsity-wool-leather-w-2.jpg","images/jackets/varsity/varsity-wool-leather-w-3.jpg","images/jackets/varsity/varsity-wool-leather-w-4.jpg"] },
-        { id: "varsity-cropped-letterman-w", name: "Cropped Letterman — Women's", price: "$ 232.00", desc: "A cropped letterman jacket with ribbed collar, cuffs and hem, and dual front patch pockets.", specs: ["Cropped letterman cut", "Ribbed collar/cuffs/hem", "Dual patch pockets"],
-          video: "videos/jackets/varsity/varsity-cropped-letterman-w.mp4",
-          images: ["images/jackets/varsity/varsity-cropped-letterman-w-1.jpg","images/jackets/varsity/varsity-cropped-letterman-w-2.jpg","images/jackets/varsity/varsity-cropped-letterman-w-3.jpg","images/jackets/varsity/varsity-cropped-letterman-w-4.jpg"] },
-        { id: "varsity-oversized-w", name: "Oversized Varsity — Women's", price: "$ 264.00", desc: "An oversized varsity silhouette in soft lambskin sleeves over a brushed wool body, for a relaxed layer.", specs: ["Lambskin sleeves", "Brushed wool body", "Oversized, relaxed fit"],
-          video: "videos/jackets/varsity/varsity-oversized-w.mp4",
-          images: ["images/jackets/varsity/varsity-oversized-w-1.jpg","images/jackets/varsity/varsity-oversized-w-2.jpg","images/jackets/varsity/varsity-oversized-w-3.jpg","images/jackets/varsity/varsity-oversized-w-4.jpg"] },
-        { id: "varsity-two-tone-w", name: "Two-Tone Varsity — Women's", price: "$ 256.00", desc: "Contrast cream and tan paneling on a snap-front varsity body with a ribbed standing collar.", specs: ["Contrast two-tone paneling", "Snap-front closure", "Ribbed standing collar"],
-          video: "videos/jackets/varsity/varsity-two-tone-w.mp4",
-          images: ["images/jackets/varsity/varsity-two-tone-w-1.jpg","images/jackets/varsity/varsity-two-tone-w-2.jpg","images/jackets/varsity/varsity-two-tone-w-3.jpg","images/jackets/varsity/varsity-two-tone-w-4.jpg"] }
+        { id: "varsity-wool-leather-w", name: "Wool-Body Varsity — Women's", price: "$ 248.00", desc: "Cream wool body with chestnut leather sleeves and snap-front closure, in a fitted women's cut.", specs: ["Wool body, leather sleeves", "Snap-front closure", "Fitted, cropped length"], video: "videos/jackets/varsity/varsity-wool-leather-w.mp4", images: ["images/jackets/varsity/varsity-wool-leather-w-1.jpg","images/jackets/varsity/varsity-wool-leather-w-2.jpg","images/jackets/varsity/varsity-wool-leather-w-3.jpg","images/jackets/varsity/varsity-wool-leather-w-4.jpg"] },
+        { id: "varsity-cropped-letterman-w", name: "Cropped Letterman — Women's", price: "$ 232.00", desc: "A cropped letterman jacket with ribbed collar, cuffs and hem, and dual front patch pockets.", specs: ["Cropped letterman cut", "Ribbed collar/cuffs/hem", "Dual patch pockets"], video: "videos/jackets/varsity/varsity-cropped-letterman-w.mp4", images: ["images/jackets/varsity/varsity-cropped-letterman-w-1.jpg","images/jackets/varsity/varsity-cropped-letterman-w-2.jpg","images/jackets/varsity/varsity-cropped-letterman-w-3.jpg","images/jackets/varsity/varsity-cropped-letterman-w-4.jpg"] },
+        { id: "varsity-oversized-w", name: "Oversized Varsity — Women's", price: "$ 264.00", desc: "An oversized varsity silhouette in soft lambskin sleeves over a brushed wool body, for a relaxed layer.", specs: ["Lambskin sleeves", "Brushed wool body", "Oversized, relaxed fit"], video: "videos/jackets/varsity/varsity-oversized-w.mp4", images: ["images/jackets/varsity/varsity-oversized-w-1.jpg","images/jackets/varsity/varsity-oversized-w-2.jpg","images/jackets/varsity/varsity-oversized-w-3.jpg","images/jackets/varsity/varsity-oversized-w-4.jpg"] },
+        { id: "varsity-two-tone-w", name: "Two-Tone Varsity — Women's", price: "$ 256.00", desc: "Contrast cream and tan paneling on a snap-front varsity body with a ribbed standing collar.", specs: ["Contrast two-tone paneling", "Snap-front closure", "Ribbed standing collar"], video: "videos/jackets/varsity/varsity-two-tone-w.mp4", images: ["images/jackets/varsity/varsity-two-tone-w-1.jpg","images/jackets/varsity/varsity-two-tone-w-2.jpg","images/jackets/varsity/varsity-two-tone-w-3.jpg","images/jackets/varsity/varsity-two-tone-w-4.jpg"] }
       ],
       men: [
-        { id: "varsity-classic-letterman-m", name: "Classic Letterman — Men's", price: "$ 278.00", desc: "The original letterman shape: navy wool body, black leather sleeves, and a snap-front placket.", specs: ["Navy wool body", "Black leather sleeves", "Snap-front placket"],
-          video: "videos/jackets/varsity/varsity-classic-letterman-m.mp4",
-          images: ["images/jackets/varsity/varsity-classic-letterman-m-1.jpg","images/jackets/varsity/varsity-classic-letterman-m-2.jpg","images/jackets/varsity/varsity-classic-letterman-m-3.jpg","images/jackets/varsity/varsity-classic-letterman-m-4.jpg"] },
-        { id: "varsity-heavyweight-m", name: "Heavyweight Varsity — Men's", price: "$ 296.00", desc: "A heavier wool-and-leather varsity with a quilted lining, built to stand in for a winter coat.", specs: ["Quilted interior lining", "Heavyweight wool body", "Leather sleeve panels"],
-          video: "videos/jackets/varsity/varsity-heavyweight-m.mp4",
-          images: ["images/jackets/varsity/varsity-heavyweight-m-1.jpg","images/jackets/varsity/varsity-heavyweight-m-2.jpg","images/jackets/varsity/varsity-heavyweight-m-3.jpg","images/jackets/varsity/varsity-heavyweight-m-4.jpg"] },
-        { id: "varsity-striped-rib-m", name: "Striped-Rib Varsity — Men's", price: "$ 268.00", desc: "Bold striped ribbing at the collar, cuffs and hem against a solid leather-sleeved wool body.", specs: ["Striped ribbed trims", "Solid wool body", "Leather sleeve panels"],
-          video: "videos/jackets/varsity/varsity-striped-rib-m.mp4",
-          images: ["images/jackets/varsity/varsity-striped-rib-m-1.jpg","images/jackets/varsity/varsity-striped-rib-m-2.jpg","images/jackets/varsity/varsity-striped-rib-m-3.jpg","images/jackets/varsity/varsity-striped-rib-m-4.jpg"] },
-        { id: "varsity-full-leather-m", name: "Full-Leather Varsity — Men's", price: "$ 342.00", desc: "A varsity cut entirely in leather rather than the usual wool body, with ribbed knit trims throughout.", specs: ["All-leather construction", "Ribbed knit trims", "Snap-front closure"],
-          video: "videos/jackets/varsity/varsity-full-leather-m.mp4",
-          images: ["images/jackets/varsity/varsity-full-leather-m-1.jpg","images/jackets/varsity/varsity-full-leather-m-2.jpg","images/jackets/varsity/varsity-full-leather-m-3.jpg","images/jackets/varsity/varsity-full-leather-m-4.jpg"] }
+        { id: "varsity-classic-letterman-m", name: "Classic Letterman — Men's", price: "$ 278.00", desc: "The original letterman shape: navy wool body, black leather sleeves, and a snap-front placket.", specs: ["Navy wool body", "Black leather sleeves", "Snap-front placket"], video: "videos/jackets/varsity/varsity-classic-letterman-m.mp4", images: ["images/jackets/varsity/varsity-classic-letterman-m-1.jpg","images/jackets/varsity/varsity-classic-letterman-m-2.jpg","images/jackets/varsity/varsity-classic-letterman-m-3.jpg","images/jackets/varsity/varsity-classic-letterman-m-4.jpg"] },
+        { id: "varsity-heavyweight-m", name: "Heavyweight Varsity — Men's", price: "$ 296.00", desc: "A heavier wool-and-leather varsity with a quilted lining, built to stand in for a winter coat.", specs: ["Quilted interior lining", "Heavyweight wool body", "Leather sleeve panels"], video: "videos/jackets/varsity/varsity-heavyweight-m.mp4", images: ["images/jackets/varsity/varsity-heavyweight-m-1.jpg","images/jackets/varsity/varsity-heavyweight-m-2.jpg","images/jackets/varsity/varsity-heavyweight-m-3.jpg","images/jackets/varsity/varsity-heavyweight-m-4.jpg"] },
+        { id: "varsity-striped-rib-m", name: "Striped-Rib Varsity — Men's", price: "$ 268.00", desc: "Bold striped ribbing at the collar, cuffs and hem against a solid leather-sleeved wool body.", specs: ["Striped ribbed trims", "Solid wool body", "Leather sleeve panels"], video: "videos/jackets/varsity/varsity-striped-rib-m.mp4", images: ["images/jackets/varsity/varsity-striped-rib-m-1.jpg","images/jackets/varsity/varsity-striped-rib-m-2.jpg","images/jackets/varsity/varsity-striped-rib-m-3.jpg","images/jackets/varsity/varsity-striped-rib-m-4.jpg"] },
+        { id: "varsity-full-leather-m", name: "Full-Leather Varsity — Men's", price: "$ 342.00", desc: "A varsity cut entirely in leather rather than the usual wool body, with ribbed knit trims throughout.", specs: ["All-leather construction", "Ribbed knit trims", "Snap-front closure"], video: "videos/jackets/varsity/varsity-full-leather-m.mp4", images: ["images/jackets/varsity/varsity-full-leather-m-1.jpg","images/jackets/varsity/varsity-full-leather-m-2.jpg","images/jackets/varsity/varsity-full-leather-m-3.jpg","images/jackets/varsity/varsity-full-leather-m-4.jpg"] }
       ]
     },
     {
       key: "hooded", label: "Hooded Jackets",
       blurb: "Detachable and fixed hoods over a leather shell, built for layering against the weather.",
       women: [
-        { id: "hooded-detachable-fur-w", name: "Detachable Faux-Fur Hood — Women's", price: "$ 318.00", desc: "A fitted leather jacket with a zip-off hood trimmed in faux fur, wearable with or without the hood attached.", specs: ["Zip-off faux-fur hood", "Fitted silhouette", "Wind-flap front zip"],
-          video: "videos/jackets/hooded/hooded-detachable-fur-w.mp4",
-          images: ["images/jackets/hooded/hooded-detachable-fur-w-1.jpg","images/jackets/hooded/hooded-detachable-fur-w-2.jpg","images/jackets/hooded/hooded-detachable-fur-w-3.jpg","images/jackets/hooded/hooded-detachable-fur-w-4.jpg"] },
-        { id: "hooded-drawstring-w", name: "Drawstring Hood Jacket — Women's", price: "$ 276.00", desc: "A soft lambskin jacket with a fixed drawstring hood and an elasticated hem for a athleisure-leaning fit.", specs: ["Fixed drawstring hood", "Elasticated hem", "Soft lambskin shell"],
-          video: "videos/jackets/hooded/hooded-drawstring-w.mp4",
-          images: ["images/jackets/hooded/hooded-drawstring-w-1.jpg","images/jackets/hooded/hooded-drawstring-w-2.jpg","images/jackets/hooded/hooded-drawstring-w-3.jpg","images/jackets/hooded/hooded-drawstring-w-4.jpg"] },
-        { id: "hooded-cropped-puffer-w", name: "Cropped Hooded Puffer — Women's", price: "$ 298.00", desc: "A lightly padded cropped leather puffer with an oversized hood and ribbed knit cuffs.", specs: ["Lightly padded shell", "Oversized hood", "Ribbed knit cuffs"],
-          video: "videos/jackets/hooded/hooded-cropped-puffer-w.mp4",
-          images: ["images/jackets/hooded/hooded-cropped-puffer-w-1.jpg","images/jackets/hooded/hooded-cropped-puffer-w-2.jpg","images/jackets/hooded/hooded-cropped-puffer-w-3.jpg","images/jackets/hooded/hooded-cropped-puffer-w-4.jpg"] },
-        { id: "hooded-belted-parka-w", name: "Belted Hooded Parka — Women's", price: "$ 384.00", desc: "A longline hooded parka in soft hide with a self-belt at the waist and a storm flap over the front zip.", specs: ["Longline parka length", "Self-belt waist", "Storm-flap front zip"],
-          video: "videos/jackets/hooded/hooded-belted-parka-w.mp4",
-          images: ["images/jackets/hooded/hooded-belted-parka-w-1.jpg","images/jackets/hooded/hooded-belted-parka-w-2.jpg","images/jackets/hooded/hooded-belted-parka-w-3.jpg","images/jackets/hooded/hooded-belted-parka-w-4.jpg"] }
+        { id: "hooded-detachable-fur-w", name: "Detachable Faux-Fur Hood — Women's", price: "$ 318.00", desc: "A fitted leather jacket with a zip-off hood trimmed in faux fur, wearable with or without the hood attached.", specs: ["Zip-off faux-fur hood", "Fitted silhouette", "Wind-flap front zip"], video: "videos/jackets/hooded/hooded-detachable-fur-w.mp4", images: ["images/jackets/hooded/hooded-detachable-fur-w-1.jpg","images/jackets/hooded/hooded-detachable-fur-w-2.jpg","images/jackets/hooded/hooded-detachable-fur-w-3.jpg","images/jackets/hooded/hooded-detachable-fur-w-4.jpg"] },
+        { id: "hooded-drawstring-w", name: "Drawstring Hood Jacket — Women's", price: "$ 276.00", desc: "A soft lambskin jacket with a fixed drawstring hood and an elasticated hem for a athleisure-leaning fit.", specs: ["Fixed drawstring hood", "Elasticated hem", "Soft lambskin shell"], video: "videos/jackets/hooded/hooded-drawstring-w.mp4", images: ["images/jackets/hooded/hooded-drawstring-w-1.jpg","images/jackets/hooded/hooded-drawstring-w-2.jpg","images/jackets/hooded/hooded-drawstring-w-3.jpg","images/jackets/hooded/hooded-drawstring-w-4.jpg"] },
+        { id: "hooded-cropped-puffer-w", name: "Cropped Hooded Puffer — Women's", price: "$ 298.00", desc: "A lightly padded cropped leather puffer with an oversized hood and ribbed knit cuffs.", specs: ["Lightly padded shell", "Oversized hood", "Ribbed knit cuffs"], video: "videos/jackets/hooded/hooded-cropped-puffer-w.mp4", images: ["images/jackets/hooded/hooded-cropped-puffer-w-1.jpg","images/jackets/hooded/hooded-cropped-puffer-w-2.jpg","images/jackets/hooded/hooded-cropped-puffer-w-3.jpg","images/jackets/hooded/hooded-cropped-puffer-w-4.jpg"] },
+        { id: "hooded-belted-parka-w", name: "Belted Hooded Parka — Women's", price: "$ 384.00", desc: "A longline hooded parka in soft hide with a self-belt at the waist and a storm flap over the front zip.", specs: ["Longline parka length", "Self-belt waist", "Storm-flap front zip"], video: "videos/jackets/hooded/hooded-belted-parka-w.mp4", images: ["images/jackets/hooded/hooded-belted-parka-w-1.jpg","images/jackets/hooded/hooded-belted-parka-w-2.jpg","images/jackets/hooded/hooded-belted-parka-w-3.jpg","images/jackets/hooded/hooded-belted-parka-w-4.jpg"] }
       ],
       men: [
-        { id: "hooded-detachable-classic-m", name: "Detachable Hood Jacket — Men's", price: "$ 342.00", desc: "A black leather jacket with a zip-off hood and a quilted lining, built to layer over a hoodie or jumper.", specs: ["Zip-off hood", "Quilted lining", "Layer-friendly fit"],
-          video: "videos/jackets/hooded/hooded-detachable-classic-m.mp4",
-          images: ["images/jackets/hooded/hooded-detachable-classic-m-1.jpg","images/jackets/hooded/hooded-detachable-classic-m-2.jpg","images/jackets/hooded/hooded-detachable-classic-m-3.jpg","images/jackets/hooded/hooded-detachable-classic-m-4.jpg"] },
-        { id: "hooded-utility-m", name: "Utility Hooded Jacket — Men's", price: "$ 358.00", desc: "Multiple flap pockets and a fixed hood on a rugged waxed-hide shell built for outdoor utility wear.", specs: ["Waxed hide shell", "Fixed hood", "Multiple flap pockets"],
-          video: "videos/jackets/hooded/hooded-utility-m.mp4",
-          images: ["images/jackets/hooded/hooded-utility-m-1.jpg","images/jackets/hooded/hooded-utility-m-2.jpg","images/jackets/hooded/hooded-utility-m-3.jpg","images/jackets/hooded/hooded-utility-m-4.jpg"] },
-        { id: "hooded-shearling-trim-m", name: "Shearling-Trim Hood — Men's", price: "$ 412.00", desc: "A hooded jacket with a shearling-trimmed hood edge and a warm knit-lined interior for cold-weather wear.", specs: ["Shearling-trimmed hood edge", "Knit-lined interior", "Snap storm flap"],
-          video: "videos/jackets/hooded/hooded-shearling-trim-m.mp4",
-          images: ["images/jackets/hooded/hooded-shearling-trim-m-1.jpg","images/jackets/hooded/hooded-shearling-trim-m-2.jpg","images/jackets/hooded/hooded-shearling-trim-m-3.jpg","images/jackets/hooded/hooded-shearling-trim-m-4.jpg"] },
-        { id: "hooded-zip-layer-m", name: "Zip-Layer Hooded Jacket — Men's", price: "$ 326.00", desc: "A streamlined hooded jacket with a single chest zip pocket and a drawcord hem for a close, layered fit.", specs: ["Single chest zip pocket", "Drawcord hem", "Streamlined fit"],
-          video: "videos/jackets/hooded/hooded-zip-layer-m.mp4",
-          images: ["images/jackets/hooded/hooded-zip-layer-m-1.jpg","images/jackets/hooded/hooded-zip-layer-m-2.jpg","images/jackets/hooded/hooded-zip-layer-m-3.jpg","images/jackets/hooded/hooded-zip-layer-m-4.jpg"] }
+        { id: "hooded-detachable-classic-m", name: "Detachable Hood Jacket — Men's", price: "$ 342.00", desc: "A black leather jacket with a zip-off hood and a quilted lining, built to layer over a hoodie or jumper.", specs: ["Zip-off hood", "Quilted lining", "Layer-friendly fit"], video: "videos/jackets/hooded/hooded-detachable-classic-m.mp4", images: ["images/jackets/hooded/hooded-detachable-classic-m-1.jpg","images/jackets/hooded/hooded-detachable-classic-m-2.jpg","images/jackets/hooded/hooded-detachable-classic-m-3.jpg","images/jackets/hooded/hooded-detachable-classic-m-4.jpg"] },
+        { id: "hooded-utility-m", name: "Utility Hooded Jacket — Men's", price: "$ 358.00", desc: "Multiple flap pockets and a fixed hood on a rugged waxed-hide shell built for outdoor utility wear.", specs: ["Waxed hide shell", "Fixed hood", "Multiple flap pockets"], video: "videos/jackets/hooded/hooded-utility-m.mp4", images: ["images/jackets/hooded/hooded-utility-m-1.jpg","images/jackets/hooded/hooded-utility-m-2.jpg","images/jackets/hooded/hooded-utility-m-3.jpg","images/jackets/hooded/hooded-utility-m-4.jpg"] },
+        { id: "hooded-shearling-trim-m", name: "Shearling-Trim Hood — Men's", price: "$ 412.00", desc: "A hooded jacket with a shearling-trimmed hood edge and a warm knit-lined interior for cold-weather wear.", specs: ["Shearling-trimmed hood edge", "Knit-lined interior", "Snap storm flap"], video: "videos/jackets/hooded/hooded-shearling-trim-m.mp4", images: ["images/jackets/hooded/hooded-shearling-trim-m-1.jpg","images/jackets/hooded/hooded-shearling-trim-m-2.jpg","images/jackets/hooded/hooded-shearling-trim-m-3.jpg","images/jackets/hooded/hooded-shearling-trim-m-4.jpg"] },
+        { id: "hooded-zip-layer-m", name: "Zip-Layer Hooded Jacket — Men's", price: "$ 326.00", desc: "A streamlined hooded jacket with a single chest zip pocket and a drawcord hem for a close, layered fit.", specs: ["Single chest zip pocket", "Drawcord hem", "Streamlined fit"], video: "videos/jackets/hooded/hooded-zip-layer-m.mp4", images: ["images/jackets/hooded/hooded-zip-layer-m-1.jpg","images/jackets/hooded/hooded-zip-layer-m-2.jpg","images/jackets/hooded/hooded-zip-layer-m-3.jpg","images/jackets/hooded/hooded-zip-layer-m-4.jpg"] }
       ]
     },
     {
       key: "trucker", label: "Trucker Jackets",
       blurb: "Boxy, button-front shapes with chest flap pockets — the workwear silhouette in full-grain hide.",
       women: [
-        { id: "trucker-classic-tan-w", name: "Classic Tan Trucker — Women's", price: "$ 228.00", desc: "A boxy trucker jacket in tan top-grain leather with twin chest flap pockets and button cuffs.", specs: ["Tan top-grain leather", "Twin chest flap pockets", "Button cuffs"],
-          video: "videos/jackets/trucker/trucker-classic-tan-w.mp4",
-          images: ["images/jackets/trucker/trucker-classic-tan-w-1.jpg","images/jackets/trucker/trucker-classic-tan-w-2.jpg","images/jackets/trucker/trucker-classic-tan-w-3.jpg","images/jackets/trucker/trucker-classic-tan-w-4.jpg"] },
-        { id: "trucker-cropped-fitted-w", name: "Cropped Fitted Trucker — Women's", price: "$ 246.00", desc: "A cropped, more fitted take on the trucker shape with a nipped waist seam and contrast topstitching.", specs: ["Cropped, fitted cut", "Nipped waist seam", "Contrast topstitching"],
-          video: "videos/jackets/trucker/trucker-cropped-fitted-w.mp4",
-          images: ["images/jackets/trucker/trucker-cropped-fitted-w-1.jpg","images/jackets/trucker/trucker-cropped-fitted-w-2.jpg","images/jackets/trucker/trucker-cropped-fitted-w-3.jpg","images/jackets/trucker/trucker-cropped-fitted-w-4.jpg"] },
-        { id: "trucker-suede-panel-w", name: "Suede-Panel Trucker — Women's", price: "$ 262.00", desc: "A trucker jacket mixing smooth leather with suede yoke panels across the chest and back.", specs: ["Mixed leather & suede panels", "Yoke chest/back detail", "Button-front closure"],
-          video: "videos/jackets/trucker/trucker-suede-panel-w.mp4",
-          images: ["images/jackets/trucker/trucker-suede-panel-w-1.jpg","images/jackets/trucker/trucker-suede-panel-w-2.jpg","images/jackets/trucker/trucker-suede-panel-w-3.jpg","images/jackets/trucker/trucker-suede-panel-w-4.jpg"] },
-        { id: "trucker-oversized-denim-cut-w", name: "Oversized Denim-Cut Trucker — Women's", price: "$ 252.00", desc: "An oversized trucker silhouette borrowed from denim jacket proportions, in soft washed lambskin.", specs: ["Washed lambskin finish", "Oversized denim-style cut", "Adjustable waist tabs"],
-          video: "videos/jackets/trucker/trucker-oversized-denim-cut-w.mp4",
-          images: ["images/jackets/trucker/trucker-oversized-denim-cut-w-1.jpg","images/jackets/trucker/trucker-oversized-denim-cut-w-2.jpg","images/jackets/trucker/trucker-oversized-denim-cut-w-3.jpg","images/jackets/trucker/trucker-oversized-denim-cut-w-4.jpg"] }
+        { id: "trucker-classic-tan-w", name: "Classic Tan Trucker — Women's", price: "$ 228.00", desc: "A boxy trucker jacket in tan top-grain leather with twin chest flap pockets and button cuffs.", specs: ["Tan top-grain leather", "Twin chest flap pockets", "Button cuffs"], video: "videos/jackets/trucker/trucker-classic-tan-w.mp4", images: ["images/jackets/trucker/trucker-classic-tan-w-1.jpg","images/jackets/trucker/trucker-classic-tan-w-2.jpg","images/jackets/trucker/trucker-classic-tan-w-3.jpg","images/jackets/trucker/trucker-classic-tan-w-4.jpg"] },
+        { id: "trucker-cropped-fitted-w", name: "Cropped Fitted Trucker — Women's", price: "$ 246.00", desc: "A cropped, more fitted take on the trucker shape with a nipped waist seam and contrast topstitching.", specs: ["Cropped, fitted cut", "Nipped waist seam", "Contrast topstitching"], video: "videos/jackets/trucker/trucker-cropped-fitted-w.mp4", images: ["images/jackets/trucker/trucker-cropped-fitted-w-1.jpg","images/jackets/trucker/trucker-cropped-fitted-w-2.jpg","images/jackets/trucker/trucker-cropped-fitted-w-3.jpg","images/jackets/trucker/trucker-cropped-fitted-w-4.jpg"] },
+        { id: "trucker-suede-panel-w", name: "Suede-Panel Trucker — Women's", price: "$ 262.00", desc: "A trucker jacket mixing smooth leather with suede yoke panels across the chest and back.", specs: ["Mixed leather & suede panels", "Yoke chest/back detail", "Button-front closure"], video: "videos/jackets/trucker/trucker-suede-panel-w.mp4", images: ["images/jackets/trucker/trucker-suede-panel-w-1.jpg","images/jackets/trucker/trucker-suede-panel-w-2.jpg","images/jackets/trucker/trucker-suede-panel-w-3.jpg","images/jackets/trucker/trucker-suede-panel-w-4.jpg"] },
+        { id: "trucker-oversized-denim-cut-w", name: "Oversized Denim-Cut Trucker — Women's", price: "$ 252.00", desc: "An oversized trucker silhouette borrowed from denim jacket proportions, in soft washed lambskin.", specs: ["Washed lambskin finish", "Oversized denim-style cut", "Adjustable waist tabs"], video: "videos/jackets/trucker/trucker-oversized-denim-cut-w.mp4", images: ["images/jackets/trucker/trucker-oversized-denim-cut-w-1.jpg","images/jackets/trucker/trucker-oversized-denim-cut-w-2.jpg","images/jackets/trucker/trucker-oversized-denim-cut-w-3.jpg","images/jackets/trucker/trucker-oversized-denim-cut-w-4.jpg"] }
       ],
       men: [
-        { id: "trucker-classic-brown-m", name: "Classic Brown Trucker — Men's", price: "$ 268.00", desc: "The standard trucker silhouette in brown full-grain hide, with corduroy collar and chest flap pockets.", specs: ["Brown full-grain hide", "Corduroy collar trim", "Chest flap pockets"],
-          video: "videos/jackets/trucker/trucker-classic-brown-m.mp4",
-          images: ["images/jackets/trucker/trucker-classic-brown-m-1.jpg","images/jackets/trucker/trucker-classic-brown-m-2.jpg","images/jackets/trucker/trucker-classic-brown-m-3.jpg","images/jackets/trucker/trucker-classic-brown-m-4.jpg"] },
-        { id: "trucker-sherpa-lined-m", name: "Sherpa-Lined Trucker — Men's", price: "$ 312.00", desc: "A trucker jacket lined in sherpa fleece for cold-weather wear, with a sherpa-trimmed collar to match.", specs: ["Sherpa fleece lining", "Sherpa-trimmed collar", "Button-front closure"],
-          video: "videos/jackets/trucker/trucker-sherpa-lined-m.mp4",
-          images: ["images/jackets/trucker/trucker-sherpa-lined-m-1.jpg","images/jackets/trucker/trucker-sherpa-lined-m-2.jpg","images/jackets/trucker/trucker-sherpa-lined-m-3.jpg","images/jackets/trucker/trucker-sherpa-lined-m-4.jpg"] },
-        { id: "trucker-waxed-canvas-mix-m", name: "Waxed Canvas-Mix Trucker — Men's", price: "$ 286.00", desc: "Leather body with waxed canvas sleeve panels, blending two textures on one rugged silhouette.", specs: ["Leather body", "Waxed canvas sleeves", "Chest flap pockets"],
-          video: "videos/jackets/trucker/trucker-waxed-canvas-mix-m.mp4",
-          images: ["images/jackets/trucker/trucker-waxed-canvas-mix-m-1.jpg","images/jackets/trucker/trucker-waxed-canvas-mix-m-2.jpg","images/jackets/trucker/trucker-waxed-canvas-mix-m-3.jpg","images/jackets/trucker/trucker-waxed-canvas-mix-m-4.jpg"] },
-        { id: "trucker-distressed-vintage-m", name: "Distressed Vintage Trucker — Men's", price: "$ 298.00", desc: "Hand-distressed hide with a worn-in vintage finish, paired with antique brass button hardware.", specs: ["Hand-distressed hide", "Vintage worn-in finish", "Antique brass buttons"],
-          video: "videos/jackets/trucker/trucker-distressed-vintage-m.mp4",
-          images: ["images/jackets/trucker/trucker-distressed-vintage-m-1.jpg","images/jackets/trucker/trucker-distressed-vintage-m-2.jpg","images/jackets/trucker/trucker-distressed-vintage-m-3.jpg","images/jackets/trucker/trucker-distressed-vintage-m-4.jpg"] }
+        { id: "trucker-classic-brown-m", name: "Classic Brown Trucker — Men's", price: "$ 268.00", desc: "The standard trucker silhouette in brown full-grain hide, with corduroy collar and chest flap pockets.", specs: ["Brown full-grain hide", "Corduroy collar trim", "Chest flap pockets"], video: "videos/jackets/trucker/trucker-classic-brown-m.mp4", images: ["images/jackets/trucker/trucker-classic-brown-m-1.jpg","images/jackets/trucker/trucker-classic-brown-m-2.jpg","images/jackets/trucker/trucker-classic-brown-m-3.jpg","images/jackets/trucker/trucker-classic-brown-m-4.jpg"] },
+        { id: "trucker-sherpa-lined-m", name: "Sherpa-Lined Trucker — Men's", price: "$ 312.00", desc: "A trucker jacket lined in sherpa fleece for cold-weather wear, with a sherpa-trimmed collar to match.", specs: ["Sherpa fleece lining", "Sherpa-trimmed collar", "Button-front closure"], video: "videos/jackets/trucker/trucker-sherpa-lined-m.mp4", images: ["images/jackets/trucker/trucker-sherpa-lined-m-1.jpg","images/jackets/trucker/trucker-sherpa-lined-m-2.jpg","images/jackets/trucker/trucker-sherpa-lined-m-3.jpg","images/jackets/trucker/trucker-sherpa-lined-m-4.jpg"] },
+        { id: "trucker-waxed-canvas-mix-m", name: "Waxed Canvas-Mix Trucker — Men's", price: "$ 286.00", desc: "Leather body with waxed canvas sleeve panels, blending two textures on one rugged silhouette.", specs: ["Leather body", "Waxed canvas sleeves", "Chest flap pockets"], video: "videos/jackets/trucker/trucker-waxed-canvas-mix-m.mp4", images: ["images/jackets/trucker/trucker-waxed-canvas-mix-m-1.jpg","images/jackets/trucker/trucker-waxed-canvas-mix-m-2.jpg","images/jackets/trucker/trucker-waxed-canvas-mix-m-3.jpg","images/jackets/trucker/trucker-waxed-canvas-mix-m-4.jpg"] },
+        { id: "trucker-distressed-vintage-m", name: "Distressed Vintage Trucker — Men's", price: "$ 298.00", desc: "Hand-distressed hide with a worn-in vintage finish, paired with antique brass button hardware.", specs: ["Hand-distressed hide", "Vintage worn-in finish", "Antique brass buttons"], video: "videos/jackets/trucker/trucker-distressed-vintage-m.mp4", images: ["images/jackets/trucker/trucker-distressed-vintage-m-1.jpg","images/jackets/trucker/trucker-distressed-vintage-m-2.jpg","images/jackets/trucker/trucker-distressed-vintage-m-3.jpg","images/jackets/trucker/trucker-distressed-vintage-m-4.jpg"] }
       ]
     },
     {
       key: "suede", label: "Suede Jackets",
       blurb: "Soft-napped hide with a matte hand, cut into trucker, overshirt, and blazer-adjacent shapes.",
       women: [
-        { id: "suede-fringe-w", name: "Fringe-Trim Suede — Women's", price: "$ 286.00", desc: "Western-inspired suede jacket with fringe trim along the yoke and sleeves, in a soft camel tone.", specs: ["Camel suede", "Fringe yoke & sleeve trim", "Snap-front closure"],
-          video: "videos/jackets/suede/suede-fringe-w.mp4",
-          images: ["images/jackets/suede/suede-fringe-w-1.jpg","images/jackets/suede/suede-fringe-w-2.jpg","images/jackets/suede/suede-fringe-w-3.jpg","images/jackets/suede/suede-fringe-w-4.jpg"] },
-        { id: "suede-belted-shacket-w", name: "Belted Suede Shacket — Women's", price: "$ 264.00", desc: "A shirt-jacket hybrid in soft suede with a self-belt at the waist and patch chest pockets.", specs: ["Shirt-jacket hybrid cut", "Self-belt waist", "Patch chest pockets"],
-          video: "videos/jackets/suede/suede-belted-shacket-w.mp4",
-          images: ["images/jackets/suede/suede-belted-shacket-w-1.jpg","images/jackets/suede/suede-belted-shacket-w-2.jpg","images/jackets/suede/suede-belted-shacket-w-3.jpg","images/jackets/suede/suede-belted-shacket-w-4.jpg"] },
-        { id: "suede-cropped-moto-w", name: "Cropped Suede Moto — Women's", price: "$ 298.00", desc: "A biker-inspired silhouette reworked in soft suede, cropped at the waist with an asymmetric zip.", specs: ["Soft suede", "Asymmetric zip", "Cropped, fitted length"],
-          video: "videos/jackets/suede/suede-cropped-moto-w.mp4",
-          images: ["images/jackets/suede/suede-cropped-moto-w-1.jpg","images/jackets/suede/suede-cropped-moto-w-2.jpg","images/jackets/suede/suede-cropped-moto-w-3.jpg","images/jackets/suede/suede-cropped-moto-w-4.jpg"] },
-        { id: "suede-oversized-blazer-w", name: "Oversized Suede Blazer — Women's", price: "$ 312.00", desc: "A relaxed blazer-cut suede jacket with notch lapels and a single-button closure, for layered tailoring.", specs: ["Notch lapel collar", "Single-button closure", "Oversized blazer cut"],
-          video: "videos/jackets/suede/suede-oversized-blazer-w.mp4",
-          images: ["images/jackets/suede/suede-oversized-blazer-w-1.jpg","images/jackets/suede/suede-oversized-blazer-w-2.jpg","images/jackets/suede/suede-oversized-blazer-w-3.jpg","images/jackets/suede/suede-oversized-blazer-w-4.jpg"] }
+        { id: "suede-fringe-w", name: "Fringe-Trim Suede — Women's", price: "$ 286.00", desc: "Western-inspired suede jacket with fringe trim along the yoke and sleeves, in a soft camel tone.", specs: ["Camel suede", "Fringe yoke & sleeve trim", "Snap-front closure"], video: "videos/jackets/suede/suede-fringe-w.mp4", images: ["images/jackets/suede/suede-fringe-w-1.jpg","images/jackets/suede/suede-fringe-w-2.jpg","images/jackets/suede/suede-fringe-w-3.jpg","images/jackets/suede/suede-fringe-w-4.jpg"] },
+        { id: "suede-belted-shacket-w", name: "Belted Suede Shacket — Women's", price: "$ 264.00", desc: "A shirt-jacket hybrid in soft suede with a self-belt at the waist and patch chest pockets.", specs: ["Shirt-jacket hybrid cut", "Self-belt waist", "Patch chest pockets"], video: "videos/jackets/suede/suede-belted-shacket-w.mp4", images: ["images/jackets/suede/suede-belted-shacket-w-1.jpg","images/jackets/suede/suede-belted-shacket-w-2.jpg","images/jackets/suede/suede-belted-shacket-w-3.jpg","images/jackets/suede/suede-belted-shacket-w-4.jpg"] },
+        { id: "suede-cropped-moto-w", name: "Cropped Suede Moto — Women's", price: "$ 298.00", desc: "A biker-inspired silhouette reworked in soft suede, cropped at the waist with an asymmetric zip.", specs: ["Soft suede", "Asymmetric zip", "Cropped, fitted length"], video: "videos/jackets/suede/suede-cropped-moto-w.mp4", images: ["images/jackets/suede/suede-cropped-moto-w-1.jpg","images/jackets/suede/suede-cropped-moto-w-2.jpg","images/jackets/suede/suede-cropped-moto-w-3.jpg","images/jackets/suede/suede-cropped-moto-w-4.jpg"] },
+        { id: "suede-oversized-blazer-w", name: "Oversized Suede Blazer — Women's", price: "$ 312.00", desc: "A relaxed blazer-cut suede jacket with notch lapels and a single-button closure, for layered tailoring.", specs: ["Notch lapel collar", "Single-button closure", "Oversized blazer cut"], video: "videos/jackets/suede/suede-oversized-blazer-w.mp4", images: ["images/jackets/suede/suede-oversized-blazer-w-1.jpg","images/jackets/suede/suede-oversized-blazer-w-2.jpg","images/jackets/suede/suede-oversized-blazer-w-3.jpg","images/jackets/suede/suede-oversized-blazer-w-4.jpg"] }
       ],
       men: [
-        { id: "suede-trucker-sand-m", name: "Sand Suede Trucker — Men's", price: "$ 274.00", desc: "Sand-toned suede in a cropped trucker cut, with corduroy-trimmed collar and chest button flaps.", specs: ["Sand suede", "Corduroy collar trim", "Twin chest button flaps"],
-          video: "videos/jackets/suede/suede-trucker-sand-m.mp4",
-          images: ["images/jackets/suede/suede-trucker-sand-m-1.jpg","images/jackets/suede/suede-trucker-sand-m-2.jpg","images/jackets/suede/suede-trucker-sand-m-3.jpg","images/jackets/suede/suede-trucker-sand-m-4.jpg"] },
-        { id: "suede-overshirt-m", name: "Suede Overshirt — Men's", price: "$ 248.00", desc: "A lightweight suede shirt-jacket with four flap pockets and a corozo-button placket for year-round layering.", specs: ["Lightweight suede", "Corozo nut buttons", "Four flap pockets"],
-          video: "videos/jackets/suede/suede-overshirt-m.mp4",
-          images: ["images/jackets/suede/suede-overshirt-m-1.jpg","images/jackets/suede/suede-overshirt-m-2.jpg","images/jackets/suede/suede-overshirt-m-3.jpg","images/jackets/suede/suede-overshirt-m-4.jpg"] },
-        { id: "suede-bomber-m", name: "Suede Bomber — Men's", price: "$ 292.00", desc: "A bomber silhouette in soft grey suede with ribbed knit cuffs and hem for a relaxed, casual finish.", specs: ["Soft grey suede", "Ribbed knit cuffs/hem", "Zip chest pocket"],
-          video: "videos/jackets/suede/suede-bomber-m.mp4",
-          images: ["images/jackets/suede/suede-bomber-m-1.jpg","images/jackets/suede/suede-bomber-m-2.jpg","images/jackets/suede/suede-bomber-m-3.jpg","images/jackets/suede/suede-bomber-m-4.jpg"] },
-        { id: "suede-blazer-m", name: "Suede Blazer Jacket — Men's", price: "$ 338.00", desc: "A tailored suede blazer with structured shoulders and notch lapels, dressing up a casual material.", specs: ["Structured shoulders", "Notch lapel collar", "Two-button closure"],
-          video: "videos/jackets/suede/suede-blazer-m.mp4",
-          images: ["images/jackets/suede/suede-blazer-m-1.jpg","images/jackets/suede/suede-blazer-m-2.jpg","images/jackets/suede/suede-blazer-m-3.jpg","images/jackets/suede/suede-blazer-m-4.jpg"] }
+        { id: "suede-trucker-sand-m", name: "Sand Suede Trucker — Men's", price: "$ 274.00", desc: "Sand-toned suede in a cropped trucker cut, with corduroy-trimmed collar and chest button flaps.", specs: ["Sand suede", "Corduroy collar trim", "Twin chest button flaps"], video: "videos/jackets/suede/suede-trucker-sand-m.mp4", images: ["images/jackets/suede/suede-trucker-sand-m-1.jpg","images/jackets/suede/suede-trucker-sand-m-2.jpg","images/jackets/suede/suede-trucker-sand-m-3.jpg","images/jackets/suede/suede-trucker-sand-m-4.jpg"] },
+        { id: "suede-overshirt-m", name: "Suede Overshirt — Men's", price: "$ 248.00", desc: "A lightweight suede shirt-jacket with four flap pockets and a corozo-button placket for year-round layering.", specs: ["Lightweight suede", "Corozo nut buttons", "Four flap pockets"], video: "videos/jackets/suede/suede-overshirt-m.mp4", images: ["images/jackets/suede/suede-overshirt-m-1.jpg","images/jackets/suede/suede-overshirt-m-2.jpg","images/jackets/suede/suede-overshirt-m-3.jpg","images/jackets/suede/suede-overshirt-m-4.jpg"] },
+        { id: "suede-bomber-m", name: "Suede Bomber — Men's", price: "$ 292.00", desc: "A bomber silhouette in soft grey suede with ribbed knit cuffs and hem for a relaxed, casual finish.", specs: ["Soft grey suede", "Ribbed knit cuffs/hem", "Zip chest pocket"], video: "videos/jackets/suede/suede-bomber-m.mp4", images: ["images/jackets/suede/suede-bomber-m-1.jpg","images/jackets/suede/suede-bomber-m-2.jpg","images/jackets/suede/suede-bomber-m-3.jpg","images/jackets/suede/suede-bomber-m-4.jpg"] },
+        { id: "suede-blazer-m", name: "Suede Blazer Jacket — Men's", price: "$ 338.00", desc: "A tailored suede blazer with structured shoulders and notch lapels, dressing up a casual material.", specs: ["Structured shoulders", "Notch lapel collar", "Two-button closure"], video: "videos/jackets/suede/suede-blazer-m.mp4", images: ["images/jackets/suede/suede-blazer-m-1.jpg","images/jackets/suede/suede-blazer-m-2.jpg","images/jackets/suede/suede-blazer-m-3.jpg","images/jackets/suede/suede-blazer-m-4.jpg"] }
       ]
     },
     {
       key: "shearling", label: "Shearling Jackets",
       blurb: "Genuine shearling linings and trims for serious cold-weather warmth, in aviator and coat-length cuts.",
       women: [
-        { id: "shearling-aviator-w", name: "Aviator Shearling — Women's", price: "$ 486.00", desc: "A fitted aviator silhouette in tan hide fully lined in genuine shearling, with a shearling-trimmed collar.", specs: ["Genuine shearling lining", "Shearling-trimmed collar", "Fitted aviator cut"],
-          video: "videos/jackets/shearling/shearling-aviator-w.mp4",
-          images: ["images/jackets/shearling/shearling-aviator-w-1.jpg","images/jackets/shearling/shearling-aviator-w-2.jpg","images/jackets/shearling/shearling-aviator-w-3.jpg","images/jackets/shearling/shearling-aviator-w-4.jpg"] },
-        { id: "shearling-cropped-collar-w", name: "Cropped Collar Shearling — Women's", price: "$ 452.00", desc: "A cropped jacket with a dramatic shearling collar left open at the chest, over a smooth hide body.", specs: ["Dramatic shearling collar", "Smooth hide body", "Cropped length"],
-          video: "videos/jackets/shearling/shearling-cropped-collar-w.mp4",
-          images: ["images/jackets/shearling/shearling-cropped-collar-w-1.jpg","images/jackets/shearling/shearling-cropped-collar-w-2.jpg","images/jackets/shearling/shearling-cropped-collar-w-3.jpg","images/jackets/shearling/shearling-cropped-collar-w-4.jpg"] },
-        { id: "shearling-belted-coat-w", name: "Belted Shearling Coat — Women's", price: "$ 568.00", desc: "A coat-length shearling jacket with a tie belt at the waist, for a longer, more formal silhouette.", specs: ["Coat-length silhouette", "Tie-belt waist", "Full shearling lining"],
-          video: "videos/jackets/shearling/shearling-belted-coat-w.mp4",
-          images: ["images/jackets/shearling/shearling-belted-coat-w-1.jpg","images/jackets/shearling/shearling-belted-coat-w-2.jpg","images/jackets/shearling/shearling-belted-coat-w-3.jpg","images/jackets/shearling/shearling-belted-coat-w-4.jpg"] },
-        { id: "shearling-vest-jacket-w", name: "Shearling Vest Jacket — Women's", price: "$ 398.00", desc: "A sleeveless shearling-lined vest-jacket hybrid, layered over knitwear for an extra warm mid-layer.", specs: ["Sleeveless vest-jacket cut", "Full shearling lining", "Snap-front closure"],
-          video: "videos/jackets/shearling/shearling-vest-jacket-w.mp4",
-          images: ["images/jackets/shearling/shearling-vest-jacket-w-1.jpg","images/jackets/shearling/shearling-vest-jacket-w-2.jpg","images/jackets/shearling/shearling-vest-jacket-w-3.jpg","images/jackets/shearling/shearling-vest-jacket-w-4.jpg"] }
+        { id: "shearling-aviator-w", name: "Aviator Shearling — Women's", price: "$ 486.00", desc: "A fitted aviator silhouette in tan hide fully lined in genuine shearling, with a shearling-trimmed collar.", specs: ["Genuine shearling lining", "Shearling-trimmed collar", "Fitted aviator cut"], video: "videos/jackets/shearling/shearling-aviator-w.mp4", images: ["images/jackets/shearling/shearling-aviator-w-1.jpg","images/jackets/shearling/shearling-aviator-w-2.jpg","images/jackets/shearling/shearling-aviator-w-3.jpg","images/jackets/shearling/shearling-aviator-w-4.jpg"] },
+        { id: "shearling-cropped-collar-w", name: "Cropped Collar Shearling — Women's", price: "$ 452.00", desc: "A cropped jacket with a dramatic shearling collar left open at the chest, over a smooth hide body.", specs: ["Dramatic shearling collar", "Smooth hide body", "Cropped length"], video: "videos/jackets/shearling/shearling-cropped-collar-w.mp4", images: ["images/jackets/shearling/shearling-cropped-collar-w-1.jpg","images/jackets/shearling/shearling-cropped-collar-w-2.jpg","images/jackets/shearling/shearling-cropped-collar-w-3.jpg","images/jackets/shearling/shearling-cropped-collar-w-4.jpg"] },
+        { id: "shearling-belted-coat-w", name: "Belted Shearling Coat — Women's", price: "$ 568.00", desc: "A coat-length shearling jacket with a tie belt at the waist, for a longer, more formal silhouette.", specs: ["Coat-length silhouette", "Tie-belt waist", "Full shearling lining"], video: "videos/jackets/shearling/shearling-belted-coat-w.mp4", images: ["images/jackets/shearling/shearling-belted-coat-w-1.jpg","images/jackets/shearling/shearling-belted-coat-w-2.jpg","images/jackets/shearling/shearling-belted-coat-w-3.jpg","images/jackets/shearling/shearling-belted-coat-w-4.jpg"] },
+        { id: "shearling-vest-jacket-w", name: "Shearling Vest Jacket — Women's", price: "$ 398.00", desc: "A sleeveless shearling-lined vest-jacket hybrid, layered over knitwear for an extra warm mid-layer.", specs: ["Sleeveless vest-jacket cut", "Full shearling lining", "Snap-front closure"], video: "videos/jackets/shearling/shearling-vest-jacket-w.mp4", images: ["images/jackets/shearling/shearling-vest-jacket-w-1.jpg","images/jackets/shearling/shearling-vest-jacket-w-2.jpg","images/jackets/shearling/shearling-vest-jacket-w-3.jpg","images/jackets/shearling/shearling-vest-jacket-w-4.jpg"] }
       ],
       men: [
-        { id: "shearling-classic-aviator-m", name: "Classic Aviator Shearling — Men's", price: "$ 524.00", desc: "The original aviator shape in tan steerhide, fully lined in genuine shearling with knit cuffs and hem.", specs: ["Tan steerhide shell", "Genuine shearling lining", "Ribbed knit cuffs"],
-          video: "videos/jackets/shearling/shearling-classic-aviator-m.mp4",
-          images: ["images/jackets/shearling/shearling-classic-aviator-m-1.jpg","images/jackets/shearling/shearling-classic-aviator-m-2.jpg","images/jackets/shearling/shearling-classic-aviator-m-3.jpg","images/jackets/shearling/shearling-classic-aviator-m-4.jpg"] },
-        { id: "shearling-collar-trim-m", name: "Shearling Collar-Trim Jacket — Men's", price: "$ 468.00", desc: "A leather jacket with a substantial shearling collar trim and a smooth hide body for contrast texture.", specs: ["Shearling collar trim", "Smooth hide body", "Snap collar tabs"],
-          video: "videos/jackets/shearling/shearling-collar-trim-m.mp4",
-          images: ["images/jackets/shearling/shearling-collar-trim-m-1.jpg","images/jackets/shearling/shearling-collar-trim-m-2.jpg","images/jackets/shearling/shearling-collar-trim-m-3.jpg","images/jackets/shearling/shearling-collar-trim-m-4.jpg"] },
-        { id: "shearling-long-coat-m", name: "Long Shearling Coat — Men's", price: "$ 612.00", desc: "A full-length shearling-lined coat with a belted waist, built as outerwear for the coldest months.", specs: ["Full-length coat cut", "Belted waist", "Complete shearling lining"],
-          video: "videos/jackets/shearling/shearling-long-coat-m.mp4",
-          images: ["images/jackets/shearling/shearling-long-coat-m-1.jpg","images/jackets/shearling/shearling-long-coat-m-2.jpg","images/jackets/shearling/shearling-long-coat-m-3.jpg","images/jackets/shearling/shearling-long-coat-m-4.jpg"] },
-        { id: "shearling-vest-m", name: "Shearling-Lined Vest — Men's", price: "$ 368.00", desc: "A sleeveless shearling-lined vest in dark hide, worn as a mid-layer under a heavier coat or jacket.", specs: ["Sleeveless vest cut", "Full shearling lining", "Snap-front closure"],
-          video: "videos/jackets/shearling/shearling-vest-m.mp4",
-          images: ["images/jackets/shearling/shearling-vest-m-1.jpg","images/jackets/shearling/shearling-vest-m-2.jpg","images/jackets/shearling/shearling-vest-m-3.jpg","images/jackets/shearling/shearling-vest-m-4.jpg"] }
+        { id: "shearling-classic-aviator-m", name: "Classic Aviator Shearling — Men's", price: "$ 524.00", desc: "The original aviator shape in tan steerhide, fully lined in genuine shearling with knit cuffs and hem.", specs: ["Tan steerhide shell", "Genuine shearling lining", "Ribbed knit cuffs"], video: "videos/jackets/shearling/shearling-classic-aviator-m.mp4", images: ["images/jackets/shearling/shearling-classic-aviator-m-1.jpg","images/jackets/shearling/shearling-classic-aviator-m-2.jpg","images/jackets/shearling/shearling-classic-aviator-m-3.jpg","images/jackets/shearling/shearling-classic-aviator-m-4.jpg"] },
+        { id: "shearling-collar-trim-m", name: "Shearling Collar-Trim Jacket — Men's", price: "$ 468.00", desc: "A leather jacket with a substantial shearling collar trim and a smooth hide body for contrast texture.", specs: ["Shearling collar trim", "Smooth hide body", "Snap collar tabs"], video: "videos/jackets/shearling/shearling-collar-trim-m.mp4", images: ["images/jackets/shearling/shearling-collar-trim-m-1.jpg","images/jackets/shearling/shearling-collar-trim-m-2.jpg","images/jackets/shearling/shearling-collar-trim-m-3.jpg","images/jackets/shearling/shearling-collar-trim-m-4.jpg"] },
+        { id: "shearling-long-coat-m", name: "Long Shearling Coat — Men's", price: "$ 612.00", desc: "A full-length shearling-lined coat with a belted waist, built as outerwear for the coldest months.", specs: ["Full-length coat cut", "Belted waist", "Complete shearling lining"], video: "videos/jackets/shearling/shearling-long-coat-m.mp4", images: ["images/jackets/shearling/shearling-long-coat-m-1.jpg","images/jackets/shearling/shearling-long-coat-m-2.jpg","images/jackets/shearling/shearling-long-coat-m-3.jpg","images/jackets/shearling/shearling-long-coat-m-4.jpg"] },
+        { id: "shearling-vest-m", name: "Shearling-Lined Vest — Men's", price: "$ 368.00", desc: "A sleeveless shearling-lined vest in dark hide, worn as a mid-layer under a heavier coat or jacket.", specs: ["Sleeveless vest cut", "Full shearling lining", "Snap-front closure"], video: "videos/jackets/shearling/shearling-vest-m.mp4", images: ["images/jackets/shearling/shearling-vest-m-1.jpg","images/jackets/shearling/shearling-vest-m-2.jpg","images/jackets/shearling/shearling-vest-m-3.jpg","images/jackets/shearling/shearling-vest-m-4.jpg"] }
       ]
     },
     {
       key: "vests", label: "Leather Vests",
       blurb: "Sleeveless leather layers — quilted, biker, and utility cuts for mid-season wear.",
       women: [
-        { id: "vest-quilted-w", name: "Diamond-Quilted Vest — Women's", price: "$ 198.00", desc: "A sleeveless diamond-quilted leather vest with a brushed lining, built as a light mid-layer.", specs: ["Diamond-quilted leather", "Brushed lining", "Snap-front closure"],
-          video: "videos/jackets/vests/vest-quilted-w.mp4",
-          images: ["images/jackets/vests/vest-quilted-w-1.jpg","images/jackets/vests/vest-quilted-w-2.jpg","images/jackets/vests/vest-quilted-w-3.jpg","images/jackets/vests/vest-quilted-w-4.jpg"] },
-        { id: "vest-biker-style-w", name: "Biker-Style Vest — Women's", price: "$ 216.00", desc: "A moto-inspired sleeveless vest with an asymmetric zip and a fitted waist seam.", specs: ["Asymmetric zip front", "Fitted waist seam", "Moto-inspired styling"],
-          video: "videos/jackets/vests/vest-biker-style-w.mp4",
-          images: ["images/jackets/vests/vest-biker-style-w-1.jpg","images/jackets/vests/vest-biker-style-w-2.jpg","images/jackets/vests/vest-biker-style-w-3.jpg","images/jackets/vests/vest-biker-style-w-4.jpg"] },
-        { id: "vest-belted-longline-w", name: "Belted Longline Vest — Women's", price: "$ 234.00", desc: "A longline vest reaching past the hip, with a self-belt and patch pockets for an outerwear-layer look.", specs: ["Longline, hip-length cut", "Self-belt waist", "Patch front pockets"],
-          video: "videos/jackets/vests/vest-belted-longline-w.mp4",
-          images: ["images/jackets/vests/vest-belted-longline-w-1.jpg","images/jackets/vests/vest-belted-longline-w-2.jpg","images/jackets/vests/vest-belted-longline-w-3.jpg","images/jackets/vests/vest-belted-longline-w-4.jpg"] },
-        { id: "vest-fringe-western-w", name: "Fringe Western Vest — Women's", price: "$ 188.00", desc: "A western-style vest with fringe trim along the hem and a soft suede face for a relaxed silhouette.", specs: ["Suede face", "Fringe hem trim", "Open-front styling"],
-          video: "videos/jackets/vests/vest-fringe-western-w.mp4",
-          images: ["images/jackets/vests/vest-fringe-western-w-1.jpg","images/jackets/vests/vest-fringe-western-w-2.jpg","images/jackets/vests/vest-fringe-western-w-3.jpg","images/jackets/vests/vest-fringe-western-w-4.jpg"] }
+        { id: "vest-quilted-w", name: "Diamond-Quilted Vest — Women's", price: "$ 198.00", desc: "A sleeveless diamond-quilted leather vest with a brushed lining, built as a light mid-layer.", specs: ["Diamond-quilted leather", "Brushed lining", "Snap-front closure"], video: "videos/jackets/vests/vest-quilted-w.mp4", images: ["images/jackets/vests/vest-quilted-w-1.jpg","images/jackets/vests/vest-quilted-w-2.jpg","images/jackets/vests/vest-quilted-w-3.jpg","images/jackets/vests/vest-quilted-w-4.jpg"] },
+        { id: "vest-biker-style-w", name: "Biker-Style Vest — Women's", price: "$ 216.00", desc: "A moto-inspired sleeveless vest with an asymmetric zip and a fitted waist seam.", specs: ["Asymmetric zip front", "Fitted waist seam", "Moto-inspired styling"], video: "videos/jackets/vests/vest-biker-style-w.mp4", images: ["images/jackets/vests/vest-biker-style-w-1.jpg","images/jackets/vests/vest-biker-style-w-2.jpg","images/jackets/vests/vest-biker-style-w-3.jpg","images/jackets/vests/vest-biker-style-w-4.jpg"] },
+        { id: "vest-belted-longline-w", name: "Belted Longline Vest — Women's", price: "$ 234.00", desc: "A longline vest reaching past the hip, with a self-belt and patch pockets for an outerwear-layer look.", specs: ["Longline, hip-length cut", "Self-belt waist", "Patch front pockets"], video: "videos/jackets/vests/vest-belted-longline-w.mp4", images: ["images/jackets/vests/vest-belted-longline-w-1.jpg","images/jackets/vests/vest-belted-longline-w-2.jpg","images/jackets/vests/vest-belted-longline-w-3.jpg","images/jackets/vests/vest-belted-longline-w-4.jpg"] },
+        { id: "vest-fringe-western-w", name: "Fringe Western Vest — Women's", price: "$ 188.00", desc: "A western-style vest with fringe trim along the hem and a soft suede face for a relaxed silhouette.", specs: ["Suede face", "Fringe hem trim", "Open-front styling"], video: "videos/jackets/vests/vest-fringe-western-w.mp4", images: ["images/jackets/vests/vest-fringe-western-w-1.jpg","images/jackets/vests/vest-fringe-western-w-2.jpg","images/jackets/vests/vest-fringe-western-w-3.jpg","images/jackets/vests/vest-fringe-western-w-4.jpg"] }
       ],
       men: [
-        { id: "vest-classic-biker-m", name: "Classic Biker Vest — Men's", price: "$ 224.00", desc: "A sleeveless biker vest in black hide with snap-front closure and twin chest pockets.", specs: ["Black hide", "Snap-front closure", "Twin chest pockets"],
-          video: "videos/jackets/vests/vest-classic-biker-m.mp4",
-          images: ["images/jackets/vests/vest-classic-biker-m-1.jpg","images/jackets/vests/vest-classic-biker-m-2.jpg","images/jackets/vests/vest-classic-biker-m-3.jpg","images/jackets/vests/vest-classic-biker-m-4.jpg"] },
-        { id: "vest-utility-pocket-m", name: "Utility Pocket Vest — Men's", price: "$ 246.00", desc: "Multiple flap pockets across the chest and waist on a rugged sleeveless utility vest.", specs: ["Multiple flap pockets", "Rugged hide construction", "Adjustable side straps"],
-          video: "videos/jackets/vests/vest-utility-pocket-m.mp4",
-          images: ["images/jackets/vests/vest-utility-pocket-m-1.jpg","images/jackets/vests/vest-utility-pocket-m-2.jpg","images/jackets/vests/vest-utility-pocket-m-3.jpg","images/jackets/vests/vest-utility-pocket-m-4.jpg"] },
-        { id: "vest-quilted-liner-m", name: "Quilted-Liner Vest — Men's", price: "$ 232.00", desc: "A quilted-lined leather vest built for warmth as a mid-layer under a jacket or coat.", specs: ["Quilted interior lining", "Snap-front closure", "Mid-layer fit"],
-          video: "videos/jackets/vests/vest-quilted-liner-m.mp4",
-          images: ["images/jackets/vests/vest-quilted-liner-m-1.jpg","images/jackets/vests/vest-quilted-liner-m-2.jpg","images/jackets/vests/vest-quilted-liner-m-3.jpg","images/jackets/vests/vest-quilted-liner-m-4.jpg"] },
-        { id: "vest-western-snap-m", name: "Western Snap Vest — Men's", price: "$ 208.00", desc: "A western-cut vest with pearl-style snap closures and a fitted, tapered silhouette.", specs: ["Pearl-style snap closures", "Tapered western cut", "Two front pockets"],
-          video: "videos/jackets/vests/vest-western-snap-m.mp4",
-          images: ["images/jackets/vests/vest-western-snap-m-1.jpg","images/jackets/vests/vest-western-snap-m-2.jpg","images/jackets/vests/vest-western-snap-m-3.jpg","images/jackets/vests/vest-western-snap-m-4.jpg"] }
+        { id: "vest-classic-biker-m", name: "Classic Biker Vest — Men's", price: "$ 224.00", desc: "A sleeveless biker vest in black hide with snap-front closure and twin chest pockets.", specs: ["Black hide", "Snap-front closure", "Twin chest pockets"], video: "videos/jackets/vests/vest-classic-biker-m.mp4", images: ["images/jackets/vests/vest-classic-biker-m-1.jpg","images/jackets/vests/vest-classic-biker-m-2.jpg","images/jackets/vests/vest-classic-biker-m-3.jpg","images/jackets/vests/vest-classic-biker-m-4.jpg"] },
+        { id: "vest-utility-pocket-m", name: "Utility Pocket Vest — Men's", price: "$ 246.00", desc: "Multiple flap pockets across the chest and waist on a rugged sleeveless utility vest.", specs: ["Multiple flap pockets", "Rugged hide construction", "Adjustable side straps"], video: "videos/jackets/vests/vest-utility-pocket-m.mp4", images: ["images/jackets/vests/vest-utility-pocket-m-1.jpg","images/jackets/vests/vest-utility-pocket-m-2.jpg","images/jackets/vests/vest-utility-pocket-m-3.jpg","images/jackets/vests/vest-utility-pocket-m-4.jpg"] },
+        { id: "vest-quilted-liner-m", name: "Quilted-Liner Vest — Men's", price: "$ 232.00", desc: "A quilted-lined leather vest built for warmth as a mid-layer under a jacket or coat.", specs: ["Quilted interior lining", "Snap-front closure", "Mid-layer fit"], video: "videos/jackets/vests/vest-quilted-liner-m.mp4", images: ["images/jackets/vests/vest-quilted-liner-m-1.jpg","images/jackets/vests/vest-quilted-liner-m-2.jpg","images/jackets/vests/vest-quilted-liner-m-3.jpg","images/jackets/vests/vest-quilted-liner-m-4.jpg"] },
+        { id: "vest-western-snap-m", name: "Western Snap Vest — Men's", price: "$ 208.00", desc: "A western-cut vest with pearl-style snap closures and a fitted, tapered silhouette.", specs: ["Pearl-style snap closures", "Tapered western cut", "Two front pockets"], video: "videos/jackets/vests/vest-western-snap-m.mp4", images: ["images/jackets/vests/vest-western-snap-m-1.jpg","images/jackets/vests/vest-western-snap-m-2.jpg","images/jackets/vests/vest-western-snap-m-3.jpg","images/jackets/vests/vest-western-snap-m-4.jpg"] }
       ]
     },
     {
       key: "coats", label: "Leather Coats",
       blurb: "Full-length silhouettes — belted trenches and overcoats for formal and cold-weather wear.",
       women: [
-        { id: "coat-long-trench-w", name: "Long Leather Trench — Women's", price: "$ 810.00", desc: "Dark umber lambskin in a full-length silhouette with a belted waist and storm flap shoulders.", specs: ["Lambskin, full length", "Belted waist", "Twill lining throughout"],
-          video: "videos/jackets/coats/coat-long-trench-w.mp4",
-          images: ["images/jackets/coats/coat-long-trench-w-1.jpg","images/jackets/coats/coat-long-trench-w-2.jpg","images/jackets/coats/coat-long-trench-w-3.jpg","images/jackets/coats/coat-long-trench-w-4.jpg"] },
-        { id: "coat-fitted-overcoat-w", name: "Fitted Overcoat — Women's", price: "$ 686.00", desc: "A tailored, fitted overcoat in smooth black hide with a notch collar and a single-button closure.", specs: ["Smooth black hide", "Notch collar", "Single-button closure"],
-          video: "videos/jackets/coats/coat-fitted-overcoat-w.mp4",
-          images: ["images/jackets/coats/coat-fitted-overcoat-w-1.jpg","images/jackets/coats/coat-fitted-overcoat-w-2.jpg","images/jackets/coats/coat-fitted-overcoat-w-3.jpg","images/jackets/coats/coat-fitted-overcoat-w-4.jpg"] },
-        { id: "coat-double-breasted-w", name: "Double-Breasted Coat — Women's", price: "$ 742.00", desc: "A double-breasted leather coat with wide lapels and a structured shoulder line for a formal silhouette.", specs: ["Double-breasted front", "Wide structured lapels", "Full-length cut"],
-          video: "videos/jackets/coats/coat-double-breasted-w.mp4",
-          images: ["images/jackets/coats/coat-double-breasted-w-1.jpg","images/jackets/coats/coat-double-breasted-w-2.jpg","images/jackets/coats/coat-double-breasted-w-3.jpg","images/jackets/coats/coat-double-breasted-w-4.jpg"] },
-        { id: "coat-belted-wrap-w", name: "Belted Wrap Coat — Women's", price: "$ 658.00", desc: "A wrap-style leather coat closed with a wide self-belt, in soft drape-y lambskin.", specs: ["Wrap-front closure", "Wide self-belt", "Soft drape-y lambskin"],
-          video: "videos/jackets/coats/coat-belted-wrap-w.mp4",
-          images: ["images/jackets/coats/coat-belted-wrap-w-1.jpg","images/jackets/coats/coat-belted-wrap-w-2.jpg","images/jackets/coats/coat-belted-wrap-w-3.jpg","images/jackets/coats/coat-belted-wrap-w-4.jpg"] }
+        { id: "coat-long-trench-w", name: "Long Leather Trench — Women's", price: "$ 810.00", desc: "Dark umber lambskin in a full-length silhouette with a belted waist and storm flap shoulders.", specs: ["Lambskin, full length", "Belted waist", "Twill lining throughout"], video: "videos/jackets/coats/coat-long-trench-w.mp4", images: ["images/jackets/coats/coat-long-trench-w-1.jpg","images/jackets/coats/coat-long-trench-w-2.jpg","images/jackets/coats/coat-long-trench-w-3.jpg","images/jackets/coats/coat-long-trench-w-4.jpg"] },
+        { id: "coat-fitted-overcoat-w", name: "Fitted Overcoat — Women's", price: "$ 686.00", desc: "A tailored, fitted overcoat in smooth black hide with a notch collar and a single-button closure.", specs: ["Smooth black hide", "Notch collar", "Single-button closure"], video: "videos/jackets/coats/coat-fitted-overcoat-w.mp4", images: ["images/jackets/coats/coat-fitted-overcoat-w-1.jpg","images/jackets/coats/coat-fitted-overcoat-w-2.jpg","images/jackets/coats/coat-fitted-overcoat-w-3.jpg","images/jackets/coats/coat-fitted-overcoat-w-4.jpg"] },
+        { id: "coat-double-breasted-w", name: "Double-Breasted Coat — Women's", price: "$ 742.00", desc: "A double-breasted leather coat with wide lapels and a structured shoulder line for a formal silhouette.", specs: ["Double-breasted front", "Wide structured lapels", "Full-length cut"], video: "videos/jackets/coats/coat-double-breasted-w.mp4", images: ["images/jackets/coats/coat-double-breasted-w-1.jpg","images/jackets/coats/coat-double-breasted-w-2.jpg","images/jackets/coats/coat-double-breasted-w-3.jpg","images/jackets/coats/coat-double-breasted-w-4.jpg"] },
+        { id: "coat-belted-wrap-w", name: "Belted Wrap Coat — Women's", price: "$ 658.00", desc: "A wrap-style leather coat closed with a wide self-belt, in soft drape-y lambskin.", specs: ["Wrap-front closure", "Wide self-belt", "Soft drape-y lambskin"], video: "videos/jackets/coats/coat-belted-wrap-w.mp4", images: ["images/jackets/coats/coat-belted-wrap-w-1.jpg","images/jackets/coats/coat-belted-wrap-w-2.jpg","images/jackets/coats/coat-belted-wrap-w-3.jpg","images/jackets/coats/coat-belted-wrap-w-4.jpg"] }
       ],
       men: [
-        { id: "coat-classic-overcoat-m", name: "Classic Leather Overcoat — Men's", price: "$ 768.00", desc: "A tailored full-length overcoat in black steerhide with a structured shoulder and notch lapel.", specs: ["Black steerhide", "Structured shoulder", "Notch lapel collar"],
-          video: "videos/jackets/coats/coat-classic-overcoat-m.mp4",
-          images: ["images/jackets/coats/coat-classic-overcoat-m-1.jpg","images/jackets/coats/coat-classic-overcoat-m-2.jpg","images/jackets/coats/coat-classic-overcoat-m-3.jpg","images/jackets/coats/coat-classic-overcoat-m-4.jpg"] },
-        { id: "coat-trench-belted-m", name: "Belted Leather Trench — Men's", price: "$ 824.00", desc: "A classic trench silhouette in tan hide with a belted waist, storm flaps, and a fully lined interior.", specs: ["Tan hide shell", "Belted waist", "Storm flap shoulders"],
-          video: "videos/jackets/coats/coat-trench-belted-m.mp4",
-          images: ["images/jackets/coats/coat-trench-belted-m-1.jpg","images/jackets/coats/coat-trench-belted-m-2.jpg","images/jackets/coats/coat-trench-belted-m-3.jpg","images/jackets/coats/coat-trench-belted-m-4.jpg"] },
-        { id: "coat-double-breasted-m", name: "Double-Breasted Coat — Men's", price: "$ 798.00", desc: "A double-breasted leather coat with peak lapels, cut for a formal silhouette over tailoring.", specs: ["Double-breasted front", "Peak lapel collar", "Full-length cut"],
-          video: "videos/jackets/coats/coat-double-breasted-m.mp4",
-          images: ["images/jackets/coats/coat-double-breasted-m-1.jpg","images/jackets/coats/coat-double-breasted-m-2.jpg","images/jackets/coats/coat-double-breasted-m-3.jpg","images/jackets/coats/coat-double-breasted-m-4.jpg"] },
-        { id: "coat-shearling-lined-m", name: "Shearling-Lined Coat — Men's", price: "$ 892.00", desc: "A full-length coat lined entirely in shearling for serious cold-weather wear, with a belted waist.", specs: ["Full shearling lining", "Belted waist", "Full-length cut"],
-          video: "videos/jackets/coats/coat-shearling-lined-m.mp4",
-          images: ["images/jackets/coats/coat-shearling-lined-m-1.jpg","images/jackets/coats/coat-shearling-lined-m-2.jpg","images/jackets/coats/coat-shearling-lined-m-3.jpg","images/jackets/coats/coat-shearling-lined-m-4.jpg"] }
+        { id: "coat-classic-overcoat-m", name: "Classic Leather Overcoat — Men's", price: "$ 768.00", desc: "A tailored full-length overcoat in black steerhide with a structured shoulder and notch lapel.", specs: ["Black steerhide", "Structured shoulder", "Notch lapel collar"], video: "videos/jackets/coats/coat-classic-overcoat-m.mp4", images: ["images/jackets/coats/coat-classic-overcoat-m-1.jpg","images/jackets/coats/coat-classic-overcoat-m-2.jpg","images/jackets/coats/coat-classic-overcoat-m-3.jpg","images/jackets/coats/coat-classic-overcoat-m-4.jpg"] },
+        { id: "coat-trench-belted-m", name: "Belted Leather Trench — Men's", price: "$ 824.00", desc: "A classic trench silhouette in tan hide with a belted waist, storm flaps, and a fully lined interior.", specs: ["Tan hide shell", "Belted waist", "Storm flap shoulders"], video: "videos/jackets/coats/coat-trench-belted-m.mp4", images: ["images/jackets/coats/coat-trench-belted-m-1.jpg","images/jackets/coats/coat-trench-belted-m-2.jpg","images/jackets/coats/coat-trench-belted-m-3.jpg","images/jackets/coats/coat-trench-belted-m-4.jpg"] },
+        { id: "coat-double-breasted-m", name: "Double-Breasted Coat — Men's", price: "$ 798.00", desc: "A double-breasted leather coat with peak lapels, cut for a formal silhouette over tailoring.", specs: ["Double-breasted front", "Peak lapel collar", "Full-length cut"], video: "videos/jackets/coats/coat-double-breasted-m.mp4", images: ["images/jackets/coats/coat-double-breasted-m-1.jpg","images/jackets/coats/coat-double-breasted-m-2.jpg","images/jackets/coats/coat-double-breasted-m-3.jpg","images/jackets/coats/coat-double-breasted-m-4.jpg"] },
+        { id: "coat-shearling-lined-m", name: "Shearling-Lined Coat — Men's", price: "$ 892.00", desc: "A full-length coat lined entirely in shearling for serious cold-weather wear, with a belted waist.", specs: ["Full shearling lining", "Belted waist", "Full-length cut"], video: "videos/jackets/coats/coat-shearling-lined-m.mp4", images: ["images/jackets/coats/coat-shearling-lined-m-1.jpg","images/jackets/coats/coat-shearling-lined-m-2.jpg","images/jackets/coats/coat-shearling-lined-m-3.jpg","images/jackets/coats/coat-shearling-lined-m-4.jpg"] }
       ]
     },
     {
       key: "blazers", label: "Leather Blazers",
       blurb: "Tailored leather in a blazer cut, with structured shoulders and notch lapels for dressier occasions.",
       women: [
-        { id: "blazer-classic-tailored-w", name: "Classic Tailored Blazer — Women's", price: "$ 412.00", desc: "A tailored leather blazer in black hide with notch lapels and a single-button closure.", specs: ["Black tailored hide", "Notch lapel collar", "Single-button closure"],
-          video: "videos/jackets/blazers/blazer-classic-tailored-w.mp4",
-          images: ["images/jackets/blazers/blazer-classic-tailored-w-1.jpg","images/jackets/blazers/blazer-classic-tailored-w-2.jpg","images/jackets/blazers/blazer-classic-tailored-w-3.jpg","images/jackets/blazers/blazer-classic-tailored-w-4.jpg"] },
-        { id: "blazer-oversized-w", name: "Oversized Blazer — Women's", price: "$ 398.00", desc: "A relaxed, oversized blazer cut in soft lambskin, worn open over knitwear or tailoring.", specs: ["Soft lambskin", "Oversized, relaxed cut", "Open-front styling"],
-          video: "videos/jackets/blazers/blazer-oversized-w.mp4",
-          images: ["images/jackets/blazers/blazer-oversized-w-1.jpg","images/jackets/blazers/blazer-oversized-w-2.jpg","images/jackets/blazers/blazer-oversized-w-3.jpg","images/jackets/blazers/blazer-oversized-w-4.jpg"] },
-        { id: "blazer-double-breasted-w", name: "Double-Breasted Blazer — Women's", price: "$ 446.00", desc: "A double-breasted leather blazer with wide lapels, dressing up the material for formal occasions.", specs: ["Double-breasted front", "Wide structured lapels", "Fitted through the waist"],
-          video: "videos/jackets/blazers/blazer-double-breasted-w.mp4",
-          images: ["images/jackets/blazers/blazer-double-breasted-w-1.jpg","images/jackets/blazers/blazer-double-breasted-w-2.jpg","images/jackets/blazers/blazer-double-breasted-w-3.jpg","images/jackets/blazers/blazer-double-breasted-w-4.jpg"] },
-        { id: "blazer-collarless-w", name: "Collarless Blazer — Women's", price: "$ 384.00", desc: "A collarless blazer silhouette in smooth hide with a single hidden hook closure for a minimal look.", specs: ["Collarless neckline", "Hidden hook closure", "Smooth tailored hide"],
-          video: "videos/jackets/blazers/blazer-collarless-w.mp4",
-          images: ["images/jackets/blazers/blazer-collarless-w-1.jpg","images/jackets/blazers/blazer-collarless-w-2.jpg","images/jackets/blazers/blazer-collarless-w-3.jpg","images/jackets/blazers/blazer-collarless-w-4.jpg"] }
+        { id: "blazer-classic-tailored-w", name: "Classic Tailored Blazer — Women's", price: "$ 412.00", desc: "A tailored leather blazer in black hide with notch lapels and a single-button closure.", specs: ["Black tailored hide", "Notch lapel collar", "Single-button closure"], video: "videos/jackets/blazers/blazer-classic-tailored-w.mp4", images: ["images/jackets/blazers/blazer-classic-tailored-w-1.jpg","images/jackets/blazers/blazer-classic-tailored-w-2.jpg","images/jackets/blazers/blazer-classic-tailored-w-3.jpg","images/jackets/blazers/blazer-classic-tailored-w-4.jpg"] },
+        { id: "blazer-oversized-w", name: "Oversized Blazer — Women's", price: "$ 398.00", desc: "A relaxed, oversized blazer cut in soft lambskin, worn open over knitwear or tailoring.", specs: ["Soft lambskin", "Oversized, relaxed cut", "Open-front styling"], video: "videos/jackets/blazers/blazer-oversized-w.mp4", images: ["images/jackets/blazers/blazer-oversized-w-1.jpg","images/jackets/blazers/blazer-oversized-w-2.jpg","images/jackets/blazers/blazer-oversized-w-3.jpg","images/jackets/blazers/blazer-oversized-w-4.jpg"] },
+        { id: "blazer-double-breasted-w", name: "Double-Breasted Blazer — Women's", price: "$ 446.00", desc: "A double-breasted leather blazer with wide lapels, dressing up the material for formal occasions.", specs: ["Double-breasted front", "Wide structured lapels", "Fitted through the waist"], video: "videos/jackets/blazers/blazer-double-breasted-w.mp4", images: ["images/jackets/blazers/blazer-double-breasted-w-1.jpg","images/jackets/blazers/blazer-double-breasted-w-2.jpg","images/jackets/blazers/blazer-double-breasted-w-3.jpg","images/jackets/blazers/blazer-double-breasted-w-4.jpg"] },
+        { id: "blazer-collarless-w", name: "Collarless Blazer — Women's", price: "$ 384.00", desc: "A collarless blazer silhouette in smooth hide with a single hidden hook closure for a minimal look.", specs: ["Collarless neckline", "Hidden hook closure", "Smooth tailored hide"], video: "videos/jackets/blazers/blazer-collarless-w.mp4", images: ["images/jackets/blazers/blazer-collarless-w-1.jpg","images/jackets/blazers/blazer-collarless-w-2.jpg","images/jackets/blazers/blazer-collarless-w-3.jpg","images/jackets/blazers/blazer-collarless-w-4.jpg"] }
       ],
       men: [
-        { id: "blazer-classic-tailored-m", name: "Classic Tailored Blazer — Men's", price: "$ 458.00", desc: "A tailored leather blazer with structured shoulders and notch lapels, suited over a shirt and tie.", specs: ["Structured shoulders", "Notch lapel collar", "Two-button closure"],
-          video: "videos/jackets/blazers/blazer-classic-tailored-m.mp4",
-          images: ["images/jackets/blazers/blazer-classic-tailored-m-1.jpg","images/jackets/blazers/blazer-classic-tailored-m-2.jpg","images/jackets/blazers/blazer-classic-tailored-m-3.jpg","images/jackets/blazers/blazer-classic-tailored-m-4.jpg"] },
-        { id: "blazer-suede-m", name: "Suede Blazer — Men's", price: "$ 412.00", desc: "A blazer cut in soft suede rather than smooth hide, keeping the tailored shape with a softer texture.", specs: ["Soft suede", "Notch lapel collar", "Two-button closure"],
-          video: "videos/jackets/blazers/blazer-suede-m.mp4",
-          images: ["images/jackets/blazers/blazer-suede-m-1.jpg","images/jackets/blazers/blazer-suede-m-2.jpg","images/jackets/blazers/blazer-suede-m-3.jpg","images/jackets/blazers/blazer-suede-m-4.jpg"] },
-        { id: "blazer-double-breasted-m", name: "Double-Breasted Blazer — Men's", price: "$ 486.00", desc: "A double-breasted leather blazer with peak lapels for a sharper, more formal silhouette.", specs: ["Double-breasted front", "Peak lapel collar", "Structured shoulders"],
-          video: "videos/jackets/blazers/blazer-double-breasted-m.mp4",
-          images: ["images/jackets/blazers/blazer-double-breasted-m-1.jpg","images/jackets/blazers/blazer-double-breasted-m-2.jpg","images/jackets/blazers/blazer-double-breasted-m-3.jpg","images/jackets/blazers/blazer-double-breasted-m-4.jpg"] },
-        { id: "blazer-unstructured-m", name: "Unstructured Blazer — Men's", price: "$ 396.00", desc: "An unstructured, unlined leather blazer for a softer drape, layering easily over a sweater.", specs: ["Unstructured, unlined build", "Soft drape", "Notch lapel collar"],
-          video: "videos/jackets/blazers/blazer-unstructured-m.mp4",
-          images: ["images/jackets/blazers/blazer-unstructured-m-1.jpg","images/jackets/blazers/blazer-unstructured-m-2.jpg","images/jackets/blazers/blazer-unstructured-m-3.jpg","images/jackets/blazers/blazer-unstructured-m-4.jpg"] }
+        { id: "blazer-classic-tailored-m", name: "Classic Tailored Blazer — Men's", price: "$ 458.00", desc: "A tailored leather blazer with structured shoulders and notch lapels, suited over a shirt and tie.", specs: ["Structured shoulders", "Notch lapel collar", "Two-button closure"], video: "videos/jackets/blazers/blazer-classic-tailored-m.mp4", images: ["images/jackets/blazers/blazer-classic-tailored-m-1.jpg","images/jackets/blazers/blazer-classic-tailored-m-2.jpg","images/jackets/blazers/blazer-classic-tailored-m-3.jpg","images/jackets/blazers/blazer-classic-tailored-m-4.jpg"] },
+        { id: "blazer-suede-m", name: "Suede Blazer — Men's", price: "$ 412.00", desc: "A blazer cut in soft suede rather than smooth hide, keeping the tailored shape with a softer texture.", specs: ["Soft suede", "Notch lapel collar", "Two-button closure"], video: "videos/jackets/blazers/blazer-suede-m.mp4", images: ["images/jackets/blazers/blazer-suede-m-1.jpg","images/jackets/blazers/blazer-suede-m-2.jpg","images/jackets/blazers/blazer-suede-m-3.jpg","images/jackets/blazers/blazer-suede-m-4.jpg"] },
+        { id: "blazer-double-breasted-m", name: "Double-Breasted Blazer — Men's", price: "$ 486.00", desc: "A double-breasted leather blazer with peak lapels for a sharper, more formal silhouette.", specs: ["Double-breasted front", "Peak lapel collar", "Structured shoulders"], video: "videos/jackets/blazers/blazer-double-breasted-m.mp4", images: ["images/jackets/blazers/blazer-double-breasted-m-1.jpg","images/jackets/blazers/blazer-double-breasted-m-2.jpg","images/jackets/blazers/blazer-double-breasted-m-3.jpg","images/jackets/blazers/blazer-double-breasted-m-4.jpg"] },
+        { id: "blazer-unstructured-m", name: "Unstructured Blazer — Men's", price: "$ 396.00", desc: "An unstructured, unlined leather blazer for a softer drape, layering easily over a sweater.", specs: ["Unstructured, unlined build", "Soft drape", "Notch lapel collar"], video: "videos/jackets/blazers/blazer-unstructured-m.mp4", images: ["images/jackets/blazers/blazer-unstructured-m-1.jpg","images/jackets/blazers/blazer-unstructured-m-2.jpg","images/jackets/blazers/blazer-unstructured-m-3.jpg","images/jackets/blazers/blazer-unstructured-m-4.jpg"] }
       ]
     }
   ];
@@ -1804,7 +1602,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   var WATCH_ICON = '<svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>';
   var EXPAND_ICON = '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-  /* ---------- SHARED: build one product-card <article> from an item + category label ---------- */
   function buildCardElement(item, catLabel){
     var article = document.createElement('article');
     article.className = 'product-card';
@@ -1842,13 +1639,11 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     return article;
   }
 
-  /* ---------- BUILD PRODUCT GRIDS FROM DATA (bags / belts / wallets) ---------- */
   function buildProductGrids(){
     Object.keys(PRODUCT_DATA).forEach(function(catKey){
       var grid = document.getElementById(catKey + 'Grid');
       if (!grid) return;
       var catLabel = CATEGORY_LABELS[catKey] || catKey;
-
       PRODUCT_DATA[catKey].forEach(function(item){
         grid.appendChild(buildCardElement(item, catLabel));
       });
@@ -1857,14 +1652,12 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 
   buildProductGrids();
 
-  /* ---------- BUILD LEATHER JACKETS: sub-category pills + 10 blocks of 8 (4 women + 4 men) ---------- */
   function buildJacketSubcategories(){
     var subNav = document.getElementById('jacketSubNav');
     var container = document.getElementById('jacketSubcats');
     if (!subNav || !container) return;
 
     JACKET_SUBCATEGORIES.forEach(function(sub, idx){
-      /* sub-nav pill */
       var pill = document.createElement('a');
       pill.className = 'subcat-pill';
       pill.href = '#jacket-' + sub.key;
@@ -1873,7 +1666,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
       if (idx === 0) pill.classList.add('is-active');
       subNav.appendChild(pill);
 
-      /* sub-category block */
       var block = document.createElement('div');
       block.className = 'subcat-block';
       block.id = 'jacket-' + sub.key;
@@ -1882,7 +1674,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
       block.innerHTML =
         '<div class="subcat-block-head">' +
           '<h3>' + sub.label + '</h3>' +
-          '<span class="subcat-block-count">' + totalCount + ' styles — ' + sub.women.length + ' women\u2019s / ' + sub.men.length + ' men\u2019s</span>' +
+          '<span class="subcat-block-count">' + totalCount + ' styles \u2014 ' + sub.women.length + ' women\u2019s / ' + sub.men.length + ' men\u2019s</span>' +
         '</div>' +
         '<p class="cat-desc" style="margin-top:-0.6rem; margin-bottom:1.8rem;">' + sub.blurb + '</p>';
 
@@ -1893,14 +1685,10 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
         rowLabel.className = 'gender-row-label';
         rowLabel.innerHTML = '<span>' + label + '</span>';
         row.appendChild(rowLabel);
-
         var grid = document.createElement('div');
         grid.className = 'product-grid';
         items.forEach(function(item){
-          /* item already carries its own explicit images[] and video path —
-             defined directly in JACKET_SUBCATEGORIES above — so we pass it
-             straight through to buildCardElement without regenerating paths. */
-          grid.appendChild(buildCardElement(item, "Jackets — " + sub.label));
+          grid.appendChild(buildCardElement(item, "Jackets \u2014 " + sub.label));
         });
         row.appendChild(grid);
         block.appendChild(row);
@@ -1908,11 +1696,9 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 
       appendGenderRow("Women's", sub.women);
       appendGenderRow("Men's", sub.men);
-
       container.appendChild(block);
     });
 
-    /* highlight the active pill as sub-category blocks scroll through view */
     var blocks = Array.prototype.slice.call(container.querySelectorAll('.subcat-block'));
     var pills = Array.prototype.slice.call(subNav.querySelectorAll('.subcat-pill'));
     function setActivePill(key){
@@ -1930,7 +1716,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
       }, { threshold: 0, rootMargin: '-160px 0px -70% 0px' });
       blocks.forEach(function(b){ subIO.observe(b); });
     }
-
     pills.forEach(function(pill){
       pill.addEventListener('click', function(){
         setActivePill(pill.getAttribute('data-subcat-pill'));
@@ -1971,8 +1756,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
         '</div>';
       track.appendChild(card);
 
-      /* graceful fallback: if the 3D render is missing, hide the broken
-         image and reveal the SVG glyph underneath instead. */
       var renderImg = card.querySelector('.card-render-img');
       renderImg.addEventListener('error', function(){
         renderImg.style.display = 'none';
@@ -1991,24 +1774,19 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     var n = cards.length;
     cards.forEach(function(card, i){
       var offset = i - current;
-      // wrap offset to the shortest direction around the loop
       if (offset > n/2) offset -= n;
       if (offset < -n/2) offset += n;
-
       var abs = Math.abs(offset);
       var x = offset * 150;
       var rotateY = offset * -28;
       var scale = abs === 0 ? 1 : abs === 1 ? 0.78 : 0.6;
       var z = -abs * 160;
       var opacity = abs > 2 ? 0 : abs === 0 ? 1 : abs === 1 ? 0.75 : 0.4;
-
-      card.style.transform =
-        'translateX(' + x + 'px) translateZ(' + z + 'px) rotateY(' + rotateY + 'deg) scale(' + scale + ')';
+      card.style.transform = 'translateX(' + x + 'px) translateZ(' + z + 'px) rotateY(' + rotateY + 'deg) scale(' + scale + ')';
       card.style.opacity = opacity;
       card.style.zIndex = 100 - abs;
       card.style.pointerEvents = abs === 0 ? 'auto' : 'none';
     });
-
     Array.prototype.forEach.call(dotsWrap.children, function(dot, i){
       dot.classList.toggle('is-active', i === current);
     });
@@ -2019,11 +1797,8 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     if (!activeCard) return;
     var renderLayer = activeCard.querySelector('[data-spin-target]');
     if (!renderLayer) return;
-    // restart the animation even if it's already mid-spin (rapid clicks):
-    // removing then re-adding the class on the next frame forces a replay.
     renderLayer.classList.remove('is-spinning');
-    // eslint-disable-next-line no-unused-expressions
-    void renderLayer.offsetWidth; // force reflow so the class removal registers
+    void renderLayer.offsetWidth;
     renderLayer.classList.add('is-spinning');
   }
 
@@ -2050,7 +1825,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     if (e.key === 'ArrowLeft'){ prev(); e.preventDefault(); }
   });
 
-  /* autoplay, pausing on interaction */
   var autoplayId = null;
   function startAutoplay(){
     stopAutoplay();
@@ -2066,18 +1840,10 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   });
   stage.addEventListener('mouseleave', startAutoplay);
 
-  /* drag / swipe */
   var dragging = false, startX = 0, deltaX = 0;
   var DRAG_THRESHOLD = 40;
-
-  function dragStart(x){
-    dragging = true; startX = x; deltaX = 0;
-    stopAutoplay();
-  }
-  function dragMove(x){
-    if (!dragging) return;
-    deltaX = x - startX;
-  }
+  function dragStart(x){ dragging = true; startX = x; deltaX = 0; stopAutoplay(); }
+  function dragMove(x){ if (!dragging) return; deltaX = x - startX; }
   function dragEnd(){
     if (!dragging) return;
     dragging = false;
@@ -2089,12 +1855,9 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   stage.addEventListener('mousedown', function(e){ dragStart(e.clientX); });
   window.addEventListener('mousemove', function(e){ dragMove(e.clientX); });
   window.addEventListener('mouseup', dragEnd);
-
   stage.addEventListener('touchstart', function(e){ dragStart(e.touches[0].clientX); }, { passive: true });
   stage.addEventListener('touchmove', function(e){ dragMove(e.touches[0].clientX); }, { passive: true });
   stage.addEventListener('touchend', dragEnd);
-
-  /* re-layout on resize for spacing consistency */
   window.addEventListener('resize', layout);
 
   /* ---------- MOBILE NAV TOGGLE ---------- */
@@ -2113,15 +1876,12 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     });
   });
 
-  /* ---------- SCROLL-REVEAL FOR PRODUCT CARDS ---------- */
+  /* ---------- SCROLL-REVEAL ---------- */
   var revealTargets = document.querySelectorAll('.product-card');
   if ('IntersectionObserver' in window){
     var io = new IntersectionObserver(function(entries){
       entries.forEach(function(entry){
-        if (entry.isIntersecting){
-          entry.target.classList.add('in-view');
-          io.unobserve(entry.target);
-        }
+        if (entry.isIntersecting){ entry.target.classList.add('in-view'); io.unobserve(entry.target); }
       });
     }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
     revealTargets.forEach(function(el){ io.observe(el); });
@@ -2129,11 +1889,8 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     revealTargets.forEach(function(el){ el.classList.add('in-view'); });
   }
 
-  /* =======================================================
-     PRODUCT GALLERY MODAL (4-image popup per card)
-     ======================================================= */
+  /* ---------- PRODUCT MODAL ---------- */
   var productModal   = document.getElementById('productModal');
-  var modalPanel      = document.getElementById('modalPanel');
   var modalClose      = document.getElementById('modalClose');
   var modalCat        = document.getElementById('modalCat');
   var modalName       = document.getElementById('modalProductName');
@@ -2152,9 +1909,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   var activeName = '';
   var lastFocusedEl = null;
 
-  /* ---- mobile-safe scroll lock: prevents iOS background scroll/bounce
-         while a popup is open, and restores the exact scroll position
-         on close (plain overflow:hidden alone leaks on iOS Safari). ---- */
   var savedScrollY = 0;
   var lockCount = 0;
   function lockBodyScroll(){
@@ -2184,7 +1938,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     var n = activeImages.length;
     activeImgIndex = ((i % n) + n) % n;
     modalMainImg.src = activeImages[activeImgIndex];
-    modalMainImg.alt = activeName + ' — image ' + (activeImgIndex + 1) + ' of ' + n;
+    modalMainImg.alt = activeName + ' \u2014 image ' + (activeImgIndex + 1) + ' of ' + n;
     Array.prototype.forEach.call(modalThumbs.children, function(thumb, idx){
       thumb.classList.toggle('is-active', idx === activeImgIndex);
     });
@@ -2192,18 +1946,14 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 
   function openProductModal(card){
     lastFocusedEl = document.activeElement;
-
     var images = JSON.parse(card.getAttribute('data-images') || '[]');
     activeImages = images.length ? images : [card.querySelector('.product-media img').src];
     activeVideoSrc = card.getAttribute('data-video') || '';
     activeName = card.getAttribute('data-name') || '';
-
     modalCat.textContent = card.getAttribute('data-cat') || '';
     modalName.textContent = activeName;
     modalPriceEl.textContent = card.getAttribute('data-price') || '';
     modalDesc.textContent = card.getAttribute('data-desc') || '';
-
-    /* build the 4 thumbnails */
     modalThumbs.innerHTML = '';
     activeImages.forEach(function(src, idx){
       var thumb = document.createElement('button');
@@ -2213,9 +1963,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
       thumb.addEventListener('click', function(){ setMainImage(idx); });
       modalThumbs.appendChild(thumb);
     });
-
     setMainImage(0);
-
     productModal.classList.add('is-open');
     lockBodyScroll();
     modalClose.focus();
@@ -2229,17 +1977,12 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 
   function attachCardHandlers(card){
     card.addEventListener('click', function(e){
-      // don't open the gallery if the click was on the video or enquire button
       if (e.target.closest('[data-action="watch"]') || e.target.closest('[data-action="enquire"]')) return;
       openProductModal(card);
     });
     card.addEventListener('keydown', function(e){
-      if ((e.key === 'Enter' || e.key === ' ') && e.target === card){
-        e.preventDefault();
-        openProductModal(card);
-      }
+      if ((e.key === 'Enter' || e.key === ' ') && e.target === card){ e.preventDefault(); openProductModal(card); }
     });
-
     var watchBtn = card.querySelector('[data-action="watch"]');
     if (watchBtn){
       watchBtn.addEventListener('click', function(e){
@@ -2247,7 +1990,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
         openVideoModal(card.getAttribute('data-video'), card.getAttribute('data-name'));
       });
     }
-
     var enquireBtn = card.querySelector('[data-action="enquire"]');
     if (enquireBtn){
       enquireBtn.addEventListener('click', function(e){
@@ -2261,20 +2003,10 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 
   modalPrevImg.addEventListener('click', function(){ setMainImage(activeImgIndex - 1); });
   modalNextImg.addEventListener('click', function(){ setMainImage(activeImgIndex + 1); });
-
   modalClose.addEventListener('click', closeProductModal);
-  productModal.addEventListener('click', function(e){
-    if (e.target === productModal) closeProductModal();
-  });
-
-  modalEnquireBtn.addEventListener('click', function(){
-    closeProductModal();
-    window.location.hash = 'contact';
-  });
-
-  modalWatchBtn.addEventListener('click', function(){
-    openVideoModal(activeVideoSrc, activeName);
-  });
+  productModal.addEventListener('click', function(e){ if (e.target === productModal) closeProductModal(); });
+  modalEnquireBtn.addEventListener('click', function(){ closeProductModal(); window.location.hash = 'contact'; });
+  modalWatchBtn.addEventListener('click', function(){ openVideoModal(activeVideoSrc, activeName); });
 
   document.addEventListener('keydown', function(e){
     if (e.key !== 'Escape') return;
@@ -2282,16 +2014,13 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     else if (productModal.classList.contains('is-open')) closeProductModal();
   });
 
-  /* keyboard arrows inside the gallery modal switch images */
   productModal.addEventListener('keydown', function(e){
     if (!productModal.classList.contains('is-open')) return;
     if (e.key === 'ArrowRight'){ setMainImage(activeImgIndex + 1); }
     if (e.key === 'ArrowLeft'){ setMainImage(activeImgIndex - 1); }
   });
 
-  /* =======================================================
-     VIDEO MODAL ("Visualize it")
-     ======================================================= */
+  /* ---------- VIDEO MODAL ---------- */
   var videoModal   = document.getElementById('videoModal');
   var videoPlayer  = document.getElementById('videoPlayer');
   var videoClose   = document.getElementById('videoClose');
@@ -2305,9 +2034,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     videoModal.classList.add('is-open');
     lockBodyScroll();
     videoClose.focus();
-    // attempt autoplay once the modal is visible; browsers may block
-    // unmuted autoplay, so this is a best-effort play() call.
-    videoPlayer.play().catch(function(){ /* user can press play manually */ });
+    videoPlayer.play().catch(function(){});
   }
 
   function closeVideoModal(){
@@ -2320,12 +2047,9 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   }
 
   videoClose.addEventListener('click', closeVideoModal);
-  videoModal.addEventListener('click', function(e){
-    if (e.target === videoModal) closeVideoModal();
-  });
+  videoModal.addEventListener('click', function(e){ if (e.target === videoModal) closeVideoModal(); });
 
 })();
-
 </script>
 </body>
 </html>

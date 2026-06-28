@@ -974,8 +974,36 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   .product-grid{ grid-template-columns: 1fr; }
   .footer-inner{ flex-direction:column; gap: 2rem; }
 
-  .subcat-nav{ gap: 0.5rem; margin-bottom: 2.4rem; padding: 0.8rem 1rem; margin-left: -1rem; margin-right: -1rem; }
-  .subcat-pill{ font-size: 0.68rem; padding: 0.45rem 0.85rem; }
+  /* FIX — mobile sub-category nav was wrapping into 3+ rows (10 pills,
+     narrow viewport), stacking a lot of vertical height under the sticky
+     header. Converted to a single-row, horizontally swipeable strip —
+     the standard compact pattern for many filter pills on mobile — so it
+     only ever takes up one line regardless of how many sub-categories
+     exist. flex-wrap is turned off and overflow-x:auto + snap scrolling
+     replace it; pills shrink slightly and gain a touch more horizontal
+     breathing room since they no longer need to wrap cleanly. */
+  .subcat-nav{
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    gap: 0.45rem;
+    margin-bottom: 2rem;
+    padding: 0.65rem 1rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    /* Edge fade hints that the strip scrolls further, without a hard cut */
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+  }
+  .subcat-nav::-webkit-scrollbar{ display:none; }
+  .subcat-pill{
+    flex: 0 0 auto;
+    font-size: 0.66rem;
+    padding: 0.42rem 0.8rem;
+    scroll-snap-align: start;
+  }
   .subcat-block{ margin-bottom: 3.2rem; }
   .subcat-block-head{ flex-direction: column; align-items: flex-start; gap: 0.3rem; }
 
@@ -1754,9 +1782,17 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     var blocks = Array.prototype.slice.call(container.querySelectorAll('.subcat-block'));
     var pills = Array.prototype.slice.call(subNav.querySelectorAll('.subcat-pill'));
     function setActivePill(key){
+      var activePill = null;
       pills.forEach(function(p){
-        p.classList.toggle('is-active', p.getAttribute('data-subcat-pill') === key);
+        var isMatch = p.getAttribute('data-subcat-pill') === key;
+        p.classList.toggle('is-active', isMatch);
+        if (isMatch) activePill = p;
       });
+      // On mobile the nav is a single horizontally-scrolling row, so the
+      // newly active pill can be off-screen — bring it into view smoothly.
+      if (activePill && typeof activePill.scrollIntoView === 'function'){
+        activePill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
     }
     if ('IntersectionObserver' in window){
       var subIO = new IntersectionObserver(function(entries){

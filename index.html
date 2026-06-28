@@ -30,6 +30,10 @@
   --container: 1240px;
   --radius: 6px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* FIX: header height is now measured in JS and written to this variable,
+     so the sticky sub-nav offset is always exact instead of a hardcoded guess. */
+  --header-h: 78px;
 }
 
 @media (prefers-reduced-motion: reduce){
@@ -46,7 +50,15 @@ body{
   font-weight: 400;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  /* FIX: removed `overflow-x: hidden` here. Setting overflow-x on body
+     (without an explicit overflow-y) makes body its own scroll/clipping
+     container in most browsers. Once that happens, position: sticky
+     elements inside body (like .subcat-nav) stick relative to that
+     container instead of the viewport — and since body itself never
+     visibly scrolls on this page, sticky silently stops working.
+     Horizontal overflow is still fully contained by `html`'s overflow-x
+     below, plus the carousel's own wrapper elements which already have
+     their own overflow: hidden. */
   max-width: 100%;
   position: relative;
 }
@@ -428,16 +440,33 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 /* =========================================================
    SUB-CATEGORY NAV + BLOCKS
    ========================================================= */
+/*
+  FIX — sticky sub-category bar:
+  1. `top` now reads the measured --header-h custom property (kept in sync
+     with the real header height by JS), instead of a hardcoded px guess
+     that could drift out of alignment with the actual sticky header.
+  2. The translucent fade-to-transparent background was replaced with a
+     solid, fully opaque panel + its own bottom border + shadow, so content
+     scrolling underneath never shows through the bar and the bar reads as
+     a distinct, fixed strip rather than a gradient overlay.
+  3. Added `isolation: isolate` so the bar's own z-index context is stable
+     above product cards (which animate opacity/transform on scroll).
+*/
 .subcat-nav{
   display:flex;
   flex-wrap: wrap;
   gap: 0.6rem;
   margin-bottom: 3.2rem;
   position: sticky;
-  top: 78px;
+  top: var(--header-h);
   z-index: 20;
-  padding: 0.9rem 0;
-  background: linear-gradient(180deg, var(--saddle-black) 65%, transparent);
+  isolation: isolate;
+  padding: 0.9rem 1.5rem;
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+  background: var(--saddle-black);
+  border-bottom: 1px solid var(--tobacco-line);
+  box-shadow: 0 12px 24px -18px rgba(0,0,0,0.55);
 }
 .subcat-pill{
   font-family: var(--font-mono);
@@ -945,7 +974,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   .product-grid{ grid-template-columns: 1fr; }
   .footer-inner{ flex-direction:column; gap: 2rem; }
 
-  .subcat-nav{ top: 64px; gap: 0.5rem; margin-bottom: 2.4rem; }
+  .subcat-nav{ gap: 0.5rem; margin-bottom: 2.4rem; padding: 0.8rem 1rem; margin-left: -1rem; margin-right: -1rem; }
   .subcat-pill{ font-size: 0.68rem; padding: 0.45rem 0.85rem; }
   .subcat-block{ margin-bottom: 3.2rem; }
   .subcat-block-head{ flex-direction: column; align-items: flex-start; gap: 0.3rem; }
@@ -1211,6 +1240,29 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 <script>
 (function(){
   "use strict";
+
+  /* ---------- FIX: measure real header height and sync to --header-h ----------
+     The sticky sub-nav previously relied on a hardcoded `top` value that
+     guessed the header's height. Fonts loading late, the mobile nav toggle,
+     or any future header edit could silently break the sticky offset.
+     This measures the header on load, on font load, and on resize, and
+     writes the real pixel value into the CSS variable the sub-nav uses. */
+  function syncHeaderHeight(){
+    var header = document.querySelector('.site-header');
+    if (!header) return;
+    var h = header.getBoundingClientRect().height;
+    if (h > 0){
+      document.documentElement.style.setProperty('--header-h', h + 'px');
+    }
+  }
+  syncHeaderHeight();
+  window.addEventListener('resize', syncHeaderHeight);
+  window.addEventListener('orientationchange', syncHeaderHeight);
+  if (document.fonts && document.fonts.ready){
+    document.fonts.ready.then(syncHeaderHeight).catch(function(){});
+  }
+  // Re-check shortly after load in case of any late layout shifts (web fonts, etc).
+  window.addEventListener('load', function(){ setTimeout(syncHeaderHeight, 50); });
 
   var CARD_DATA = [
     {
@@ -1867,12 +1919,16 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     var open = primaryNav.classList.toggle('is-open');
     navToggle.classList.toggle('is-open', open);
     navToggle.setAttribute('aria-expanded', String(open));
+    // FIX: header height can change when the mobile menu opens in some
+    // browsers' layout; re-measure so the sticky sub-nav offset stays correct.
+    syncHeaderHeight();
   });
   primaryNav.querySelectorAll('a').forEach(function(link){
     link.addEventListener('click', function(){
       primaryNav.classList.remove('is-open');
       navToggle.classList.remove('is-open');
       navToggle.setAttribute('aria-expanded', 'false');
+      syncHeaderHeight();
     });
   });
 

@@ -887,6 +887,112 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 }
 
 /* =========================================================
+   CONTACT SECTION
+   ========================================================= */
+.contact-section{
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 4.6rem 1.5rem;
+  scroll-margin-top: 90px;
+}
+.contact-panel{
+  background: var(--espresso);
+  border: 1px solid var(--tobacco-line);
+  border-radius: 10px;
+  padding: 2.6rem 2.8rem;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 2.6rem;
+  position: relative;
+  overflow: hidden;
+}
+.contact-panel::before{
+  content:"";
+  position:absolute; inset:10px;
+  border: 1.5px dashed var(--tobacco-line);
+  border-radius: 8px;
+  pointer-events:none;
+}
+.contact-intro .cat-tab{ margin-bottom: 0.9rem; }
+.contact-intro h2{
+  font-size: clamp(1.7rem, 3vw, 2.2rem);
+  margin-bottom: 0.9rem;
+}
+.contact-intro p{
+  color: var(--parchment-dim);
+  font-size: 0.96rem;
+  max-width: 46ch;
+}
+
+.contact-details{
+  display:flex;
+  flex-direction: column;
+  gap: 1.3rem;
+  justify-content: center;
+}
+.contact-row{
+  display:flex;
+  align-items:flex-start;
+  gap: 0.9rem;
+}
+.contact-row-icon{
+  flex-shrink:0;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--tobacco-line);
+  color: var(--brass);
+  display:flex; align-items:center; justify-content:center;
+}
+.contact-row-icon svg{ width: 16px; height: 16px; }
+.contact-row-text{ display:flex; flex-direction:column; gap: 0.15rem; }
+.contact-row-label{
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cognac-light);
+}
+.contact-row-value{
+  font-size: 0.95rem;
+  color: var(--parchment);
+  transition: color 0.25s var(--ease);
+}
+.contact-row-value:is(a):hover{ color: var(--brass); }
+
+.contact-wholesale-note{
+  margin-top: 0.4rem;
+  display:flex;
+  gap: 0.7rem;
+  align-items:flex-start;
+  padding: 0.9rem 1.05rem;
+  border: 1px dashed var(--tobacco-line);
+  border-radius: 6px;
+  background: rgba(212,160,86,0.05);
+}
+.contact-wholesale-note svg{
+  flex-shrink:0;
+  width: 16px; height: 16px;
+  color: var(--brass);
+  margin-top: 0.15rem;
+}
+.contact-wholesale-note p{
+  font-size: 0.84rem;
+  color: var(--parchment-dim);
+  line-height: 1.5;
+}
+.contact-wholesale-note strong{
+  color: var(--brass);
+  font-weight: 500;
+}
+
+@media (max-width: 760px){
+  .contact-panel{
+    grid-template-columns: 1fr;
+    padding: 2rem 1.4rem;
+  }
+}
+
+/* =========================================================
    FOOTER
    ========================================================= */
 .site-footer{
@@ -1187,8 +1293,58 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   <div class="product-grid" id="walletsGrid"></div>
 </section>
 
+<div class="stitched-divider" aria-hidden="true"></div>
+
+<!-- ===================== CONTACT ===================== -->
+<section class="contact-section" id="contact">
+  <div class="contact-panel">
+    <div class="contact-intro">
+      <span class="cat-tab">Get in touch</span>
+      <h2>Contact Us</h2>
+      <p>Wholesale, bespoke, or one-off orders — reach out and we'll get back to you with lead times, pricing, and samples where needed.</p>
+    </div>
+
+    <div class="contact-details">
+      <div class="contact-row">
+        <span class="contact-row-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 6h18v12H3V6Z" stroke="currentColor" stroke-width="1.6"/><path d="M3 7l9 6 9-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="contact-row-text">
+          <span class="contact-row-label">Email</span>
+          <a class="contact-row-value" href="mailto:hello@amsenterprises.example">hello@amsenterprises.example</a>
+        </span>
+      </div>
+
+      <div class="contact-row">
+        <span class="contact-row-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 4h3l2 5-2.5 1.5a11 11 0 0 0 5 5L14 13l5 2v3a2 2 0 0 1-2 2A14 14 0 0 1 5 6a2 2 0 0 1 0-2Z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="contact-row-text">
+          <span class="contact-row-label">Phone</span>
+          <a class="contact-row-value" href="tel:+10000000000">+1 (000) 000-0000</a>
+        </span>
+      </div>
+
+      <div class="contact-row">
+        <span class="contact-row-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="9" r="2.4" stroke="currentColor" stroke-width="1.4"/></svg>
+        </span>
+        <span class="contact-row-text">
+          <span class="contact-row-label">Workshop</span>
+          <span class="contact-row-value">By appointment — enquire for address &amp; visiting hours</span>
+        </span>
+      </div>
+
+      <div class="contact-wholesale-note">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9 2.6 17.4a1.6 1.6 0 0 0 1.4 2.4h16a1.6 1.6 0 0 0 1.4-2.4L13.7 3.9a1.6 1.6 0 0 0-2.8 0Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p><strong>Wholesale orders:</strong> For wholesale orders, we require a minimum of five pieces per specific product.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== FOOTER ===================== -->
-<footer class="site-footer" id="contact">
+<footer class="site-footer">
   <div class="footer-inner">
     <div class="footer-brand">
       <strong>AMS Enterprises</strong>

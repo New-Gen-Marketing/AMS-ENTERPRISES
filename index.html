@@ -440,18 +440,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 /* =========================================================
    SUB-CATEGORY NAV + BLOCKS
    ========================================================= */
-/*
-  FIX — sticky sub-category bar:
-  1. `top` now reads the measured --header-h custom property (kept in sync
-     with the real header height by JS), instead of a hardcoded px guess
-     that could drift out of alignment with the actual sticky header.
-  2. The translucent fade-to-transparent background was replaced with a
-     solid, fully opaque panel + its own bottom border + shadow, so content
-     scrolling underneath never shows through the bar and the bar reads as
-     a distinct, fixed strip rather than a gradient overlay.
-  3. Added `isolation: isolate` so the bar's own z-index context is stable
-     above product cards (which animate opacity/transform on scroll).
-*/
 .subcat-nav{
   display:flex;
   flex-wrap: wrap;
@@ -553,18 +541,14 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   box-shadow: 0 0 0 2px var(--brass), 0 18px 40px -18px rgba(0,0,0,0.55);
 }
 
-/* ---------------------------------------------------------
-   IMAGE STAGE — FIX: square ratio + tight padding so product
-   fills the card regardless of source image dimensions.
-   --------------------------------------------------------- */
 .product-media{
   position: relative;
-  aspect-ratio: 1 / 1; /* FIX: was 4/3 — square gives more height */
+  aspect-ratio: 1 / 1;
   background:
     radial-gradient(120% 130% at 50% 0%, rgba(255,255,255,0.05), transparent 60%),
     linear-gradient(150deg, #3a2818, #211611);
   overflow:hidden;
-  padding: 5%; /* FIX: was 10% — tighter = bigger image */
+  padding: 5%;
 }
 .product-media img{
   width:100%; height:100%;
@@ -754,7 +738,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   background:
     radial-gradient(120% 130% at 50% 0%, rgba(255,255,255,0.05), transparent 60%),
     linear-gradient(150deg, #3a2818, #211611);
-  padding: 3%; /* FIX: was 8% — product now fills most of the popup */
+  padding: 3%;
 }
 .modal-gallery-main img{
   width:100%; height:100%;
@@ -792,7 +776,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     linear-gradient(150deg, #3a2818, #211611);
   transition: border-color 0.25s var(--ease), opacity 0.25s var(--ease);
   opacity: 0.7;
-  padding: 6%; /* FIX: was 12% */
+  padding: 6%;
 }
 .modal-thumb img{
   width:100%; height:100%;
@@ -1080,14 +1064,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   .product-grid{ grid-template-columns: 1fr; }
   .footer-inner{ flex-direction:column; gap: 2rem; }
 
-  /* FIX — mobile sub-category nav was wrapping into 3+ rows (10 pills,
-     narrow viewport), stacking a lot of vertical height under the sticky
-     header. Converted to a single-row, horizontally swipeable strip —
-     the standard compact pattern for many filter pills on mobile — so it
-     only ever takes up one line regardless of how many sub-categories
-     exist. flex-wrap is turned off and overflow-x:auto + snap scrolling
-     replace it; pills shrink slightly and gain a touch more horizontal
-     breathing room since they no longer need to wrap cleanly. */
   .subcat-nav{
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -1099,7 +1075,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     padding: 0.65rem 1rem;
     margin-left: -1rem;
     margin-right: -1rem;
-    /* Edge fade hints that the strip scrolls further, without a hard cut */
     -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
     mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
   }
@@ -1425,12 +1400,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 (function(){
   "use strict";
 
-  /* ---------- FIX: measure real header height and sync to --header-h ----------
-     The sticky sub-nav previously relied on a hardcoded `top` value that
-     guessed the header's height. Fonts loading late, the mobile nav toggle,
-     or any future header edit could silently break the sticky offset.
-     This measures the header on load, on font load, and on resize, and
-     writes the real pixel value into the CSS variable the sub-nav uses. */
   function syncHeaderHeight(){
     var header = document.querySelector('.site-header');
     if (!header) return;
@@ -1445,7 +1414,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   if (document.fonts && document.fonts.ready){
     document.fonts.ready.then(syncHeaderHeight).catch(function(){});
   }
-  // Re-check shortly after load in case of any late layout shifts (web fonts, etc).
   window.addEventListener('load', function(){ setTimeout(syncHeaderHeight, 50); });
 
   var CARD_DATA = [
@@ -1944,8 +1912,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
         p.classList.toggle('is-active', isMatch);
         if (isMatch) activePill = p;
       });
-      // On mobile the nav is a single horizontally-scrolling row, so the
-      // newly active pill can be off-screen — bring it into view smoothly.
       if (activePill && typeof activePill.scrollIntoView === 'function'){
         activePill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
       }
@@ -2111,8 +2077,6 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     var open = primaryNav.classList.toggle('is-open');
     navToggle.classList.toggle('is-open', open);
     navToggle.setAttribute('aria-expanded', String(open));
-    // FIX: header height can change when the mobile menu opens in some
-    // browsers' layout; re-measure so the sticky sub-nav offset stays correct.
     syncHeaderHeight();
   });
   primaryNav.querySelectorAll('a').forEach(function(link){
@@ -2157,6 +2121,33 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   var activeName = '';
   var lastFocusedEl = null;
 
+  /* ---------- FIX: scroll-position-preserving body lock ----------
+     Previously, closing the modal could leave the page scrolled to the
+     top instead of restoring the user's original scroll position. The
+     root cause was a combination of two things firing right after the
+     fixed-position lock was removed:
+       1. `html { scroll-behavior: smooth }` (set globally in the CSS)
+          turned the corrective `window.scrollTo()` call into an animated
+          scroll instead of an instant jump, and in some browsers the
+          scroll position used as the animation's start point was read
+          before the layout had reflowed back to its un-locked state —
+          producing a jump to the top that the animation never properly
+          recovered from.
+       2. Restoring focus to the previously-focused element via
+          `el.focus()` triggers the browser's default scroll-into-view
+          behavior, which (again under the smooth scroll-behavior) could
+          re-trigger an animated scroll to a stale position before the
+          layout had settled.
+     The fix:
+       - Temporarily force `scroll-behavior: auto` on <html> while we
+         unlock the body and restore the scroll position, so the
+         restore is instant and not subject to animation/timing races,
+         then restore the original scroll-behavior on the next frame.
+       - Use `requestAnimationFrame` to ensure the unlock styles have
+         been applied/reflowed before we call `window.scrollTo`.
+       - Pass `{ preventScroll: true }` to all `.focus()` calls used to
+         restore focus after closing a modal, so focusing the element
+         never triggers its own independent scroll-into-view action. */
   var savedScrollY = 0;
   var lockCount = 0;
   function lockBodyScroll(){
@@ -2173,12 +2164,27 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   function unlockBodyScroll(){
     lockCount = Math.max(0, lockCount - 1);
     if (lockCount === 0){
+      var htmlEl = document.documentElement;
+      var previousScrollBehavior = htmlEl.style.scrollBehavior;
+      htmlEl.style.scrollBehavior = 'auto';
+
       document.body.style.position = '';
       document.body.style.top = '';
       document.body.style.left = '';
       document.body.style.right = '';
       document.body.style.width = '';
-      window.scrollTo(0, savedScrollY);
+
+      // Wait one frame so the unlocked layout has settled before we
+      // restore the scroll position — avoids racing the reflow.
+      requestAnimationFrame(function(){
+        window.scrollTo(0, savedScrollY);
+        // Restore whatever scroll-behavior was set (smooth, by default)
+        // on the following frame so future user-driven smooth scrolling
+        // (e.g. clicking a nav link) is unaffected.
+        requestAnimationFrame(function(){
+          htmlEl.style.scrollBehavior = previousScrollBehavior;
+        });
+      });
     }
   }
 
@@ -2214,13 +2220,13 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     setMainImage(0);
     productModal.classList.add('is-open');
     lockBodyScroll();
-    modalClose.focus();
+    modalClose.focus({ preventScroll: true });
   }
 
   function closeProductModal(){
     productModal.classList.remove('is-open');
     unlockBodyScroll();
-    if (lastFocusedEl) lastFocusedEl.focus();
+    if (lastFocusedEl) lastFocusedEl.focus({ preventScroll: true });
   }
 
   function attachCardHandlers(card){
@@ -2281,7 +2287,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     videoCaption.textContent = name || '';
     videoModal.classList.add('is-open');
     lockBodyScroll();
-    videoClose.focus();
+    videoClose.focus({ preventScroll: true });
     videoPlayer.play().catch(function(){});
   }
 
@@ -2291,7 +2297,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     videoPlayer.removeAttribute('src');
     videoPlayer.load();
     unlockBodyScroll();
-    if (videoLastFocusedEl) videoLastFocusedEl.focus();
+    if (videoLastFocusedEl) videoLastFocusedEl.focus({ preventScroll: true });
   }
 
   videoClose.addEventListener('click', closeVideoModal);

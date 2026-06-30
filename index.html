@@ -1803,6 +1803,26 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
 
   var CATEGORY_LABELS = { bags: "Bags", belts: "Belts", wallets: "Wallets" };
 
+  /* ---------- FIX: Enquire buttons ----------
+     Previously these set `window.location.hash = 'contact'` directly.
+     Reassigning a hash to the value it already holds is a no-op in the
+     browser — no navigation event fires and the page does not scroll.
+     So after the first click (or after arriving on the page already at
+     #contact, e.g. via a shared link or browser back/forward), every
+     subsequent Enquire click silently did nothing.
+     This helper scrolls to the contact section directly via
+     scrollIntoView every time, regardless of the current hash, and
+     separately updates the URL hash (via history.replaceState, which
+     never triggers its own scroll) purely so the URL stays bookmarkable. */
+  function scrollToContact(){
+    var contactSection = document.getElementById('contact');
+    if (!contactSection) return;
+    contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (window.location.hash !== '#contact' && window.history && window.history.replaceState){
+      window.history.replaceState(null, '', '#contact');
+    }
+  }
+
   var WATCH_ICON = '<svg viewBox="0 0 24 24" fill="none"><path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor"/></svg>';
   var EXPAND_ICON = '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
@@ -2248,7 +2268,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
     if (enquireBtn){
       enquireBtn.addEventListener('click', function(e){
         e.stopPropagation();
-        window.location.hash = 'contact';
+        scrollToContact();
       });
     }
   }
@@ -2259,7 +2279,7 @@ h1, h2, h3{ font-family: var(--font-display); font-weight: 600; color: var(--par
   modalNextImg.addEventListener('click', function(){ setMainImage(activeImgIndex + 1); });
   modalClose.addEventListener('click', closeProductModal);
   productModal.addEventListener('click', function(e){ if (e.target === productModal) closeProductModal(); });
-  modalEnquireBtn.addEventListener('click', function(){ closeProductModal(); window.location.hash = 'contact'; });
+  modalEnquireBtn.addEventListener('click', function(){ closeProductModal(); scrollToContact(); });
   modalWatchBtn.addEventListener('click', function(){ openVideoModal(activeVideoSrc, activeName); });
 
   document.addEventListener('keydown', function(e){
